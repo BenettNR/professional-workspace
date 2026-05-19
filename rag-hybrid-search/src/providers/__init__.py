@@ -7,6 +7,7 @@ or generation code.
 from src.providers.embedding import EmbeddingProvider, VoyageEmbeddingProvider
 from src.providers.embedding_local import LocalSentenceTransformerEmbeddingProvider
 from src.providers.llm import AnthropicLLMProvider, LLMProvider
+from src.providers.llm_replay import ReplayLLMProvider
 
 __all__ = [
     "EmbeddingProvider",
@@ -14,4 +15,5 @@ __all__ = [
     "LocalSentenceTransformerEmbeddingProvider",
     "LLMProvider",
     "AnthropicLLMProvider",
+    "ReplayLLMProvider",
 ]
