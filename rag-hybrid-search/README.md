@@ -81,44 +81,45 @@ Each stage is in its own package with one responsibility:
 
 ## Quickstart
 
-### Requirements
-
-- Python 3.11+ ([install via winget on Windows](https://learn.microsoft.com/en-us/windows/package-manager/winget/): `winget install Python.Python.3.12`)
-- Docker Desktop (for the one-command demo)
-- API keys: [Anthropic](https://console.anthropic.com/) and [Voyage AI](https://dash.voyageai.com)
-
-> An **offline demo mode** (zero API keys required, replay-based) ships in PR-2 of the polish pass — see [Roadmap](#roadmap).
-
-### Run with Docker
+### Offline demo (no API keys, ~2 min) ⭐
 
 ```bash
 git clone https://github.com/BenettNR/professional-workspace.git
 cd professional-workspace/rag-hybrid-search
-cp .env.example .env       # then fill in VOYAGE_API_KEY and ANTHROPIC_API_KEY
-docker compose up --build
+make demo                      # or: ./tasks.ps1 demo   (Windows)
 ```
 
-Open:
+The first run downloads the local embedding model (~80MB) and builds the local index from the bundled Nexus API documentation. After that:
 - Streamlit UI → http://localhost:8501
 - FastAPI docs → http://localhost:8000/docs
 - Health check → http://localhost:8000/health
 
-### Run locally (without Docker)
+In offline mode, Claude responses are **replayed from a recorded fixture set** for the 12 curated demo questions — the UI banner lists them. To regenerate fixtures with fresh Claude responses, set keys and run `make replay-fixtures` (one-time, ~$1).
+
+### Live mode (real Anthropic + Voyage)
 
 ```bash
-# Using uv (recommended — faster than pip)
-uv venv && uv pip install -e ".[dev]"
-cp .env.example .env       # fill in keys
-
-# Seed the index from the bundled Nexus API demo corpus
-uv run python scripts/seed.py
-
-# Start the API
-uv run uvicorn src.api.main:app --reload --port 8000
-
-# Start the Streamlit UI (in another terminal)
-uv run streamlit run frontend/app.py
+cp .env.example .env           # fill in VOYAGE_API_KEY and ANTHROPIC_API_KEY
+make up                        # or: ./tasks.ps1 up
+uv run python scripts/seed.py  # index the bundled corpus with real embeddings
 ```
+
+### Run locally without Docker
+
+```bash
+uv venv && uv pip install -e ".[dev]"   # install deps into .venv
+# Offline mode (no .env needed):
+EMBEDDING_BACKEND=local LLM_BACKEND=replay uv run uvicorn src.api.main:app --reload --port 8000
+# In another terminal:
+EMBEDDING_BACKEND=local LLM_BACKEND=replay uv run streamlit run frontend/app.py
+```
+
+### Requirements
+
+- Python 3.11+
+- Docker Desktop (for `make demo` / `make up`)
+- API keys (optional — only needed for live mode): [Anthropic](https://console.anthropic.com/) and [Voyage AI](https://dash.voyageai.com)
+- Windows users without GNU Make: use `./tasks.ps1` instead of `make`
 
 ### Try a query
 
@@ -222,8 +223,8 @@ This project is being polished into a portfolio piece via a five-PR series. Full
 
 | PR | Status | What it ships |
 |---|---|---|
-| **PR-1: Provider abstraction** | In progress | `EmbeddingProvider` / `LLMProvider` Protocols; pipeline depends on interfaces, not vendor SDKs. [Plan](docs/superpowers/plans/2026-05-19-pr1-provider-abstraction.md) |
-| **PR-2: Offline demo mode** | Planned | Zero-API-key local mode: sentence-transformers embeddings + Claude replay fixtures. `make demo` runs in < 2 min on a fresh clone. |
+| **PR-1: Provider abstraction** | ✅ Open ([#1](https://github.com/BenettNR/professional-workspace/pull/1)) | `EmbeddingProvider` / `LLMProvider` Protocols; pipeline depends on interfaces, not vendor SDKs. [Plan](docs/superpowers/plans/2026-05-19-pr1-provider-abstraction.md) |
+| **PR-2: Offline demo mode** | 🚧 In progress | Zero-API-key local mode: sentence-transformers embeddings + Claude replay fixtures. `make demo` runs in < 2 min on a fresh clone. [Plan](docs/superpowers/plans/2026-05-19-pr2-offline-demo-mode.md) |
 | **PR-3: Eval harness + results** | Planned | 25-question golden dataset, ablation table (dense-only / hybrid / hybrid+rerank), latency p50/p95 per stage, `make eval` reproducibility. |
 | **PR-4: CI + quality gates** | Planned | GitHub Actions: ruff + mypy --strict + pytest (3.11 / 3.12 matrix) + docker build. Green badges in this README. |
 | **PR-5: README + ADRs + screenshots** | Planned | Three Michael-Nygard ADRs, demo GIF, screenshots, finished README hero. |
