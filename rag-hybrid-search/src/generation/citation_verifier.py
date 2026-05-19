@@ -2,7 +2,7 @@
 
 For each citation [N] in the generated answer, we:
   1. Parse the claim sentence(s) surrounding the citation marker
-  2. Send (claim, chunk_N_content) to Claude as LLM-as-judge
+  2. Send (claim, chunk_N_content) to the LLM as LLM-as-judge
   3. Mark the citation as verified or flagged
 
 This catches the most common RAG failure mode: confident answers with
@@ -13,11 +13,11 @@ from __future__ import annotations
 import asyncio
 import re
 
-import anthropic
 import structlog
 
-from src.exceptions import CitationVerificationError
+from src.exceptions import CitationVerificationError, ProviderError
 from src.models import Citation, RetrievedChunk
+from src.providers.llm import LLMProvider
 
 log = structlog.get_logger(__name__)
 
@@ -53,9 +53,8 @@ def _parse_citation_numbers(answer: str) -> list[int]:
 
 
 class CitationVerifier:
-    def __init__(self, api_key: str, model: str) -> None:
-        self._client = anthropic.AsyncAnthropic(api_key=api_key)
-        self._model = model
+    def __init__(self, llm: LLMProvider) -> None:
+        self._llm = llm
 
     async def verify(
         self,
@@ -94,31 +93,26 @@ class CitationVerifier:
                 source_file="",
                 text_excerpt="",
                 verified=False,
-                verification_reason=f"Citation [{number}] references a non-existent context block.",
+                verification_reason=(
+                    f"Citation [{number}] references a non-existent context block."
+                ),
             )
 
         claim = _extract_claim_sentences(answer, number)
         passage = rc.chunk.content[:800]
 
         try:
-            response = await self._client.messages.create(
-                model=self._model,
-                max_tokens=100,
+            verdict_text = await self._llm.complete(
                 system=_VERIFICATION_SYSTEM,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": f"CLAIM:\n{claim}\n\nPASSAGE:\n{passage}",
-                    }
-                ],
+                user=f"CLAIM:\n{claim}\n\nPASSAGE:\n{passage}",
+                max_tokens=100,
             )
-            verdict_text = response.content[0].text.strip()
-        except Exception as exc:
+        except ProviderError as exc:
             raise CitationVerificationError(
                 f"Verification call failed for citation [{number}]: {exc}"
             ) from exc
 
-        lines = verdict_text.split("\n", 1)
+        lines = verdict_text.strip().split("\n", 1)
         verdict = lines[0].strip().upper()
         reason = lines[1].strip() if len(lines) > 1 else verdict_text
 
