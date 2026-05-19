@@ -20,7 +20,7 @@ router = APIRouter()
 _ALLOWED_EXTENSIONS = {".md", ".txt", ".html", ".htm", ".pdf"}
 
 FileDep = Annotated[UploadFile, File(...)]
-StrategyDep = Annotated[str, Form(default="recursive")]
+StrategyDep = Annotated[str, Form()]  # default is set on the parameter below
 IndexerDep = Annotated[DocumentIndexer, Depends(get_indexer)]
 SparseDep = Annotated[SparseRetriever, Depends(get_sparse_retriever)]
 
@@ -28,9 +28,9 @@ SparseDep = Annotated[SparseRetriever, Depends(get_sparse_retriever)]
 @router.post("/ingest", response_model=IngestResponse)
 async def ingest_document(
     file: FileDep,
-    strategy: StrategyDep,
     indexer: IndexerDep,
     sparse_retriever: SparseDep,
+    strategy: StrategyDep = "recursive",
 ) -> IngestResponse:
     filename = file.filename or "upload"
     suffix = Path(filename).suffix.lower()
