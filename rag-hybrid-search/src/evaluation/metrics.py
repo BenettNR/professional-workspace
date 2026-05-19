@@ -162,7 +162,7 @@ class JudgeEvaluator:
                 max_tokens=self._max_tokens,
             )
             return float(text.strip())
-        except (Exception,) as exc:
+        except Exception as exc:
             log.warning("judge_call_failed", error=str(exc))
             return 0.5
 

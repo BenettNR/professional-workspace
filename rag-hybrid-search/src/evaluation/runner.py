@@ -35,7 +35,6 @@ if TYPE_CHECKING:
     from src.generation.generator import RAGGenerator
     from src.providers.embedding import EmbeddingProvider
     from src.retrieval.dense import DenseRetriever
-    from src.retrieval.fusion import HybridRetriever
     from src.retrieval.reranker import Reranker
     from src.retrieval.sparse import SparseRetriever
 
@@ -151,11 +150,11 @@ class AblationRunner:
 
     def __init__(
         self,
-        embedder: "EmbeddingProvider",
-        dense: "DenseRetriever",
-        sparse: "SparseRetriever",
-        reranker: "Reranker",
-        generator: "RAGGenerator",
+        embedder: EmbeddingProvider,
+        dense: DenseRetriever,
+        sparse: SparseRetriever,
+        reranker: Reranker,
+        generator: RAGGenerator,
         dense_top_k: int = 10,
         sparse_top_k: int = 10,
         fusion_top_k: int = 20,

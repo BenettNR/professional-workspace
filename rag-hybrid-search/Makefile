@@ -78,6 +78,14 @@ seed: ## Seed the index from data/raw/ (uses active embedder backend)
 replay-fixtures: ## Record Claude responses over demo questions (needs real keys)
 	$(PYTHON) scripts/build_replay_fixtures.py
 
+.PHONY: eval
+eval: ## Run the full ablation eval (dense-only, hybrid, hybrid+rerank)
+	$(PYTHON) scripts/run_eval.py
+
+.PHONY: eval-fast
+eval-fast: ## Run eval without LLM-as-judge (retrieval + latency only)
+	$(PYTHON) scripts/run_eval.py --no-llm-judge
+
 .PHONY: clean
 clean: ## Wipe the persistent indexes (forces a re-seed next run)
 	rm -rf data/chroma data/bm25_index.pkl
