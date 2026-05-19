@@ -3,6 +3,7 @@
 Flow for each document:
   load → chunk → embed → deduplicate → upsert ChromaDB → rebuild BM25
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -203,9 +204,7 @@ class DocumentIndexer:
         extensions = self._loader.supported_extensions()
         pattern = "**/*" if recursive else "*"
         files = [
-            p
-            for p in directory.glob(pattern)
-            if p.is_file() and p.suffix.lower() in extensions
+            p for p in directory.glob(pattern) if p.is_file() and p.suffix.lower() in extensions
         ]
         log.info("ingesting_directory", path=str(directory), files=len(files))
         results = []

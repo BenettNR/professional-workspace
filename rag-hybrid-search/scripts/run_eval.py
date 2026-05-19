@@ -14,6 +14,7 @@ Usage:
     uv run python scripts/run_eval.py --config hybrid       # just one
     uv run python scripts/run_eval.py --no-llm-judge        # retrieval only
 """
+
 from __future__ import annotations
 
 import argparse
@@ -59,8 +60,7 @@ def _format_aggregate_table(results: list[ConfigRunResult]) -> str:
 
 def _format_latency_breakdown(results: list[ConfigRunResult]) -> str:
     header = (
-        "| Config | embed p50 | retrieve p50 | rerank p50 | generate p50 |\n"
-        "|---|---|---|---|---|"
+        "| Config | embed p50 | retrieve p50 | rerank p50 | generate p50 |\n|---|---|---|---|---|"
     )
     rows = []
     for r in results:
@@ -86,9 +86,7 @@ def _format_by_category(results: list[ConfigRunResult]) -> str:
     for r in results:
         by_cat = r.aggregate["hit@1_by_category"]
         assert isinstance(by_cat, dict)
-        cells = [f"`{r.config_name}`"] + [
-            str(by_cat.get(cat, "—")) for cat in categories
-        ]
+        cells = [f"`{r.config_name}`"] + [str(by_cat.get(cat, "—")) for cat in categories]
         rows.append("| " + " | ".join(cells) + " |")
     return header + "\n" + "\n".join(rows)
 
@@ -313,9 +311,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    configs: list[ConfigName] = (
-        list(ALL_CONFIGS) if args.config == "all" else [args.config]
-    )
+    configs: list[ConfigName] = list(ALL_CONFIGS) if args.config == "all" else [args.config]
 
     asyncio.run(
         _run(

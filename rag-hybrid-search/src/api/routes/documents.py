@@ -1,4 +1,5 @@
 """GET /v1/documents — list all indexed documents."""
+
 from __future__ import annotations
 
 from typing import Annotated

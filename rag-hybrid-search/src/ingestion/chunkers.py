@@ -3,6 +3,7 @@
 All chunkers expose an async `chunk()` method for interface uniformity.
 Fixed and Recursive are synchronous internally; Semantic awaits embeddings.
 """
+
 from __future__ import annotations
 
 import re
@@ -129,9 +130,7 @@ class SemanticChunker(TextChunker):
         return chunks or [text]
 
 
-def get_chunker(
-    strategy: ChunkStrategy, embedder: EmbeddingProvider | None = None
-) -> TextChunker:
+def get_chunker(strategy: ChunkStrategy, embedder: EmbeddingProvider | None = None) -> TextChunker:
     """Factory: return the appropriate chunker for the given strategy."""
     if strategy == ChunkStrategy.FIXED:
         return FixedSizeChunker()

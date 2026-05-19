@@ -1,4 +1,5 @@
 """Tests for LLMProvider implementations."""
+
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock
@@ -33,22 +34,16 @@ class TestAnthropicLLMProviderComplete:
     @pytest.mark.asyncio
     async def test_complete_returns_text_content(self):
         provider = AnthropicLLMProvider(api_key="test-key", model="claude-sonnet-4-6")
-        provider._client.messages.create = AsyncMock(
-            return_value=_fake_response("Hello, world.")
-        )
+        provider._client.messages.create = AsyncMock(return_value=_fake_response("Hello, world."))
 
-        result = await provider.complete(
-            system="be terse", user="say hi", max_tokens=100
-        )
+        result = await provider.complete(system="be terse", user="say hi", max_tokens=100)
 
         assert result == "Hello, world."
 
     @pytest.mark.asyncio
     async def test_complete_passes_system_user_and_max_tokens(self):
         provider = AnthropicLLMProvider(api_key="test-key", model="claude-sonnet-4-6")
-        provider._client.messages.create = AsyncMock(
-            return_value=_fake_response("ok")
-        )
+        provider._client.messages.create = AsyncMock(return_value=_fake_response("ok"))
 
         await provider.complete(system="SYS", user="USR", max_tokens=42)
 

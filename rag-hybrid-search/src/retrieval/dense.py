@@ -1,4 +1,5 @@
 """Dense retrieval via ChromaDB vector similarity search."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -55,7 +56,7 @@ class DenseRetriever:
             zip(ids, documents, metadatas, distances, strict=True)
         ):
             # Convert L2 distance to approximate cosine similarity
-            cosine_sim = max(0.0, 1.0 - (dist ** 2) / 2.0)
+            cosine_sim = max(0.0, 1.0 - (dist**2) / 2.0)
             chunk = DocumentChunk(
                 id=chunk_id,
                 content=doc,

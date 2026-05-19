@@ -1,4 +1,5 @@
 """Tests for generation utilities (citation parsing, confidence scoring)."""
+
 from __future__ import annotations
 
 from src.generation.citation_verifier import _extract_claim_sentences, _parse_citation_numbers
@@ -6,6 +7,7 @@ from src.generation.confidence import _citation_coverage, _retrieval_confidence
 from src.models import ChunkStrategy, Citation, DocumentChunk, DocumentMetadata, RetrievedChunk
 
 # ── Citation parsing ──────────────────────────────────────────────────────────
+
 
 class TestCitationParsing:
     def test_parse_single_citation(self):
@@ -38,6 +40,7 @@ class TestCitationParsing:
 
 
 # ── Confidence scoring ────────────────────────────────────────────────────────
+
 
 class TestConfidenceScoring:
     def _make_chunk(self) -> DocumentChunk:

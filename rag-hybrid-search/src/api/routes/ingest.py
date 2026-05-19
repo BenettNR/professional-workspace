@@ -1,4 +1,5 @@
 """POST /v1/ingest — upload and index a new document."""
+
 from __future__ import annotations
 
 import tempfile

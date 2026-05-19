@@ -1,4 +1,5 @@
 """Tests for pure-function retrieval metrics."""
+
 from __future__ import annotations
 
 from src.evaluation.retrieval_metrics import (
@@ -69,13 +70,7 @@ class TestMRRAtK:
         assert mrr_at_k(["x.md", "target.md", "y.md"], ["target.md"], 5) == 0.5
 
     def test_third_result_relevant(self):
-        assert (
-            abs(
-                mrr_at_k(["x.md", "y.md", "target.md"], ["target.md"], 5)
-                - (1 / 3)
-            )
-            < 1e-9
-        )
+        assert abs(mrr_at_k(["x.md", "y.md", "target.md"], ["target.md"], 5) - (1 / 3)) < 1e-9
 
     def test_no_relevant_in_top_k(self):
         assert mrr_at_k(["x.md", "y.md"], ["target.md"], 5) == 0.0

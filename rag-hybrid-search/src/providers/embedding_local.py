@@ -7,6 +7,7 @@ for CI that imports modules to run mypy or lint without ever calling encode().
 The synchronous `model.encode()` is wrapped in `asyncio.to_thread` so callers
 remain async-compatible without blocking the event loop on CPU-bound work.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -30,9 +31,7 @@ class LocalSentenceTransformerEmbeddingProvider:
     not as accurate as voyage-3 but requires zero API keys and runs locally.
     """
 
-    def __init__(
-        self, model_name: str = _DEFAULT_MODEL, embedding_dim: int = _DEFAULT_DIM
-    ) -> None:
+    def __init__(self, model_name: str = _DEFAULT_MODEL, embedding_dim: int = _DEFAULT_DIM) -> None:
         self.name = f"local:{model_name}"
         self.embedding_dim = embedding_dim
         self._model_name = model_name

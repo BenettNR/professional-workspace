@@ -4,6 +4,7 @@ BM25 excels at exact-term matching (function names, config keys, error codes)
 that semantic search often misses — precisely why hybrid search outperforms
 dense-only RAG on technical documentation.
 """
+
 from __future__ import annotations
 
 import pickle
@@ -26,9 +27,7 @@ log = structlog.get_logger(__name__)
 class SparseRetriever:
     """BM25 retrieval over a pickled corpus index."""
 
-    def __init__(
-        self, index_path: Path, collection: chromadb.Collection | None = None
-    ) -> None:
+    def __init__(self, index_path: Path, collection: chromadb.Collection | None = None) -> None:
         self._index_path = index_path
         self._collection = collection  # used to hydrate chunk metadata
         self._state: dict[str, Any] | None = None  # lazy loaded

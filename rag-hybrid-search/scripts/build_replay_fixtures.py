@@ -18,6 +18,7 @@ ever needing an API key.
 
 Cost: ~12 questions × 5-7 LLM calls each × ~500 tokens average ≈ ~$1.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -95,9 +96,7 @@ async def _record(
     log.info("recording_start", questions=len(questions), output=str(fixtures_path))
 
     # Force live backends regardless of env (we need real responses to record)
-    real_llm = AnthropicLLMProvider(
-        api_key=settings.anthropic_api_key, model=settings.llm_model
-    )
+    real_llm = AnthropicLLMProvider(api_key=settings.anthropic_api_key, model=settings.llm_model)
     recorder = _RecordingLLMProvider(real_llm)
 
     # Build the pipeline with our recording wrapper in place of the LLM.

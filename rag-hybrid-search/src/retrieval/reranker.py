@@ -5,6 +5,7 @@ The model is lazy-loaded on first use (~80 MB download on first run).
 
 Optionally falls back to LLM-as-judge scoring when use_llm=True.
 """
+
 from __future__ import annotations
 
 import asyncio

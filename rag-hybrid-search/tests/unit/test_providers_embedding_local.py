@@ -4,6 +4,7 @@ The actual sentence-transformers model is mocked — we don't want unit tests
 to download an 80MB model from huggingface every CI run. The integration that
 proves the real model works happens at the `make demo` smoke-test layer.
 """
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
@@ -58,9 +59,7 @@ class TestLocalEmbeddingProviderLazyLoad:
         provider._model = _fake_model()  # pretend already loaded
 
         # If we call _load_model with model already set, no construction happens.
-        with patch(
-            "sentence_transformers.SentenceTransformer"
-        ) as st_constructor:
+        with patch("sentence_transformers.SentenceTransformer") as st_constructor:
             await provider.embed_query("test1")
             await provider.embed_documents(["test2", "test3"])
             st_constructor.assert_not_called()

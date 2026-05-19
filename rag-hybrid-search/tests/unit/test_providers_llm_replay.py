@@ -1,4 +1,5 @@
 """Tests for ReplayLLMProvider."""
+
 from __future__ import annotations
 
 import json
@@ -56,9 +57,7 @@ class TestReplayLLMProviderLoading:
     def test_loads_demo_questions_when_provided(self, tmp_path: Path):
         fixtures = _write_fixtures(tmp_path, {})
         questions = _write_questions(tmp_path, ["What is X?", "How do I Y?"])
-        provider = ReplayLLMProvider(
-            fixtures_path=fixtures, demo_questions_path=questions
-        )
+        provider = ReplayLLMProvider(fixtures_path=fixtures, demo_questions_path=questions)
         assert provider.available_questions == ["What is X?", "How do I Y?"]
 
 
@@ -77,13 +76,9 @@ class TestReplayLLMProviderComplete:
     async def test_miss_returns_diagnostic_with_question_count(self, tmp_path: Path):
         fixtures = _write_fixtures(tmp_path, {})
         questions = _write_questions(tmp_path, ["A?", "B?", "C?"])
-        provider = ReplayLLMProvider(
-            fixtures_path=fixtures, demo_questions_path=questions
-        )
+        provider = ReplayLLMProvider(fixtures_path=fixtures, demo_questions_path=questions)
 
-        result = await provider.complete(
-            system="SYS", user="unknown question", max_tokens=100
-        )
+        result = await provider.complete(system="SYS", user="unknown question", max_tokens=100)
 
         assert "Demo mode" in result
         assert "3 pre-recorded" in result
@@ -116,9 +111,7 @@ class TestReplayLLMProviderReload:
         import time
 
         time.sleep(0.01)
-        fixtures.write_text(
-            json.dumps({"calls": {key: "now recorded"}}), encoding="utf-8"
-        )
+        fixtures.write_text(json.dumps({"calls": {key: "now recorded"}}), encoding="utf-8")
         os.utime(fixtures, None)  # bump mtime
 
         after = await provider.complete(system="SYS", user="USR", max_tokens=100)

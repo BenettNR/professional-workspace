@@ -1,4 +1,5 @@
 """Tests for EmbeddingProvider implementations."""
+
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock
@@ -77,9 +78,7 @@ class TestVoyageEmbeddingProviderDocuments:
 
     @pytest.mark.asyncio
     async def test_embed_documents_batches_over_limit(self):
-        provider = VoyageEmbeddingProvider(
-            api_key="test-key", model="voyage-3", batch_size=2
-        )
+        provider = VoyageEmbeddingProvider(api_key="test-key", model="voyage-3", batch_size=2)
 
         def make_result(n: int) -> MagicMock:
             r = MagicMock()

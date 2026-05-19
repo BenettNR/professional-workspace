@@ -5,6 +5,7 @@ The system prompt instructs the LLM to:
   2. Use bracketed citations [1], [2], … for every factual claim
   3. Explicitly state when context is insufficient rather than hallucinating
 """
+
 from __future__ import annotations
 
 import structlog

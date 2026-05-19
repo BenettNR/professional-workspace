@@ -1,4 +1,5 @@
 """Tests for the ingestion module (loaders, chunkers)."""
+
 from __future__ import annotations
 
 import textwrap
@@ -11,6 +12,7 @@ from src.ingestion.loaders import DocumentLoaderRegistry, UnsupportedFormatError
 from src.models import ChunkStrategy
 
 # ── Loaders ───────────────────────────────────────────────────────────────────
+
 
 class TestDocumentLoaderRegistry:
     def setup_method(self):
@@ -56,6 +58,7 @@ class TestDocumentLoaderRegistry:
 
 
 # ── Chunkers ──────────────────────────────────────────────────────────────────
+
 
 class TestFixedSizeChunker:
     @pytest.mark.asyncio

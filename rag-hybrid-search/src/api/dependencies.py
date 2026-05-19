@@ -7,6 +7,7 @@ Concrete providers are selected based on `settings.embedding_backend` and
 `settings.llm_backend`. PR-2 adds 'local' and 'replay' alternatives; this PR
 ships 'voyage' and 'anthropic' only.
 """
+
 from __future__ import annotations
 
 from functools import lru_cache
@@ -40,9 +41,7 @@ def get_embedding_provider() -> EmbeddingProvider:
         )
     if settings.embedding_backend == "local":
         return LocalSentenceTransformerEmbeddingProvider()
-    raise ProviderError(
-        f"Unsupported embedding_backend '{settings.embedding_backend}'."
-    )
+    raise ProviderError(f"Unsupported embedding_backend '{settings.embedding_backend}'.")
 
 
 @lru_cache(maxsize=1)
@@ -57,9 +56,7 @@ def get_llm_provider() -> LLMProvider:
             fixtures_path=Path(settings.replay_fixtures_path),
             demo_questions_path=Path(settings.demo_questions_path),
         )
-    raise ProviderError(
-        f"Unsupported llm_backend '{settings.llm_backend}'."
-    )
+    raise ProviderError(f"Unsupported llm_backend '{settings.llm_backend}'.")
 
 
 def _safe_collection_name(provider_name: str, dim: int) -> str:

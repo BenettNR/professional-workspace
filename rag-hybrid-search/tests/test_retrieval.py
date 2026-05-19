@@ -1,4 +1,5 @@
 """Tests for the retrieval module (fusion, deduplication)."""
+
 from __future__ import annotations
 
 from src.models import ChunkStrategy, DocumentChunk, DocumentMetadata, RetrievedChunk

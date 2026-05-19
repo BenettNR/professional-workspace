@@ -3,6 +3,7 @@
 Each loader returns (plaintext_content, extra_metadata). The registry
 dispatches to the correct loader based on file extension.
 """
+
 from __future__ import annotations
 
 import re
@@ -36,7 +37,9 @@ class MarkdownLoader(DocumentLoader):
             raise DocumentLoadError(f"Cannot read {path}: {exc}") from exc
 
         heading_match = re.search(r"^#{1,6}\s+(.+)", content, re.MULTILINE)
-        return content, {"section_heading": heading_match.group(1).strip() if heading_match else None}
+        return content, {
+            "section_heading": heading_match.group(1).strip() if heading_match else None
+        }
 
 
 class PlainTextLoader(DocumentLoader):
@@ -112,8 +115,7 @@ class DocumentLoaderRegistry:
             if loader.supports(path):
                 return loader.load(path)
         raise UnsupportedFormatError(
-            f"No loader registered for extension '{path.suffix}'. "
-            f"Supported: .md, .txt, .html, .pdf"
+            f"No loader registered for extension '{path.suffix}'. Supported: .md, .txt, .html, .pdf"
         )
 
     def supported_extensions(self) -> set[str]:

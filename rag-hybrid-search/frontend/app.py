@@ -8,6 +8,7 @@ Features:
   - Document library view
   - File upload for new documents
 """
+
 from __future__ import annotations
 
 import json
@@ -39,9 +40,7 @@ def _is_offline_mode() -> tuple[bool, str, str]:
 
     if not embedding_backend:
         embedding_backend = (
-            "local"
-            if (not voyage_key or voyage_key.startswith("pa-..."))
-            else "voyage"
+            "local" if (not voyage_key or voyage_key.startswith("pa-...")) else "voyage"
         )
     if not llm_backend:
         llm_backend = (
@@ -55,9 +54,7 @@ def _is_offline_mode() -> tuple[bool, str, str]:
 
 
 def _load_demo_questions() -> list[str]:
-    path = Path(
-        os.getenv("DEMO_QUESTIONS_PATH", "eval/demo_questions.json")
-    )
+    path = Path(os.getenv("DEMO_QUESTIONS_PATH", "eval/demo_questions.json"))
     if not path.exists():
         return []
     try:
@@ -77,14 +74,13 @@ if _OFFLINE:
     )
     _DEMO_QUESTIONS = _load_demo_questions()
     if _DEMO_QUESTIONS:
-        with st.expander(
-            f"Available demo questions ({len(_DEMO_QUESTIONS)})", expanded=False
-        ):
+        with st.expander(f"Available demo questions ({len(_DEMO_QUESTIONS)})", expanded=False):
             for q in _DEMO_QUESTIONS:
                 st.write(f"- {q}")
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
+
 
 def _api(method: str, path: str, **kwargs) -> dict | None:
     try:

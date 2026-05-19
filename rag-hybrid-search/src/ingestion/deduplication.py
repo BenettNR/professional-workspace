@@ -4,6 +4,7 @@ Before inserting a new chunk, we query ChromaDB for its nearest neighbour.
 If similarity > threshold (default 0.95) the chunk is a near-duplicate and
 is skipped, preventing redundant context in retrieval results.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -54,7 +55,7 @@ class DuplicateDetector:
             return False
 
         l2_dist = distances[0]
-        cosine_sim = 1.0 - (l2_dist ** 2) / 2.0
+        cosine_sim = 1.0 - (l2_dist**2) / 2.0
         is_dup: bool = bool(cosine_sim > self._threshold)
 
         if is_dup:

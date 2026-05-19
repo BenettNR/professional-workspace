@@ -7,6 +7,7 @@ Endpoints:
 
 OpenAPI docs available at /docs (Swagger) and /redoc.
 """
+
 from __future__ import annotations
 
 from collections.abc import AsyncIterator

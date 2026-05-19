@@ -1,4 +1,5 @@
 """Shared domain models used across all pipeline layers."""
+
 from __future__ import annotations
 
 from collections.abc import Mapping
@@ -15,14 +16,14 @@ class ChunkStrategy(StrEnum):
 
 @dataclass
 class DocumentMetadata:
-    source_file: str       # original file path (relative to raw_data_dir)
-    filename: str          # basename of the source file
-    chunk_index: int       # 0-based position within the document
-    total_chunks: int      # total chunks produced from this document
+    source_file: str  # original file path (relative to raw_data_dir)
+    filename: str  # basename of the source file
+    chunk_index: int  # 0-based position within the document
+    total_chunks: int  # total chunks produced from this document
     chunking_strategy: ChunkStrategy
     char_count: int
     section_heading: str | None = None
-    page_number: int | None = None   # PDF pages only
+    page_number: int | None = None  # PDF pages only
 
     def to_chroma_dict(self) -> dict[str, Any]:
         """Serialize to a flat dict compatible with ChromaDB metadata storage."""
@@ -53,7 +54,7 @@ class DocumentMetadata:
 
 @dataclass
 class DocumentChunk:
-    id: str                  # stable UUID derived from source + chunk_index
+    id: str  # stable UUID derived from source + chunk_index
     content: str
     metadata: DocumentMetadata
 
@@ -71,20 +72,20 @@ class RetrievedChunk:
 
 @dataclass
 class Citation:
-    number: int             # as it appears in the answer [1], [2], …
+    number: int  # as it appears in the answer [1], [2], …
     chunk_id: str
     source_file: str
-    text_excerpt: str       # first 200 chars of the supporting chunk
+    text_excerpt: str  # first 200 chars of the supporting chunk
     verified: bool = False
     verification_reason: str = ""
 
 
 @dataclass
 class ConfidenceScore:
-    retrieval_confidence: float   # avg normalised relevance of top-k chunks
-    citation_coverage: float      # verified_citations / total_citations
-    answer_completeness: float    # LLM-as-judge: did answer cover all sub-questions
-    composite: float              # weighted average of the three dimensions
+    retrieval_confidence: float  # avg normalised relevance of top-k chunks
+    citation_coverage: float  # verified_citations / total_citations
+    answer_completeness: float  # LLM-as-judge: did answer cover all sub-questions
+    composite: float  # weighted average of the three dimensions
 
     def is_sufficient(self, threshold: float) -> bool:
         return self.composite >= threshold
