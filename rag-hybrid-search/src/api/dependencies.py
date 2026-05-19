@@ -21,7 +21,9 @@ from src.generation.confidence import ConfidenceScorer
 from src.generation.generator import RAGGenerator
 from src.ingestion.indexer import DocumentIndexer
 from src.providers.embedding import EmbeddingProvider, VoyageEmbeddingProvider
+from src.providers.embedding_local import LocalSentenceTransformerEmbeddingProvider
 from src.providers.llm import AnthropicLLMProvider, LLMProvider
+from src.providers.llm_replay import ReplayLLMProvider
 from src.retrieval.dense import DenseRetriever
 from src.retrieval.fusion import HybridRetriever
 from src.retrieval.reranker import Reranker
@@ -36,9 +38,10 @@ def get_embedding_provider() -> EmbeddingProvider:
             model=settings.embedding_model,
             batch_size=settings.embedding_batch_size,
         )
+    if settings.embedding_backend == "local":
+        return LocalSentenceTransformerEmbeddingProvider()
     raise ProviderError(
-        f"Unsupported embedding_backend '{settings.embedding_backend}'. "
-        "Local backend is added in PR-2."
+        f"Unsupported embedding_backend '{settings.embedding_backend}'."
     )
 
 
@@ -49,17 +52,36 @@ def get_llm_provider() -> LLMProvider:
             api_key=settings.anthropic_api_key,
             model=settings.llm_model,
         )
+    if settings.llm_backend == "replay":
+        return ReplayLLMProvider(
+            fixtures_path=Path(settings.replay_fixtures_path),
+            demo_questions_path=Path(settings.demo_questions_path),
+        )
     raise ProviderError(
-        f"Unsupported llm_backend '{settings.llm_backend}'. "
-        "Replay backend is added in PR-2."
+        f"Unsupported llm_backend '{settings.llm_backend}'."
     )
+
+
+def _safe_collection_name(provider_name: str, dim: int) -> str:
+    """Derive a Chroma-safe collection name from the embedder identity.
+
+    Chroma names must match `[a-zA-Z0-9._-]{3,512}` and avoid certain
+    sequences. The provider name like 'voyage:voyage-3' becomes
+    'rag_docs_voyage_voyage-3_1024'.
+    """
+    safe = provider_name.replace(":", "_").replace("/", "-")
+    return f"rag_docs_{safe}_{dim}"
 
 
 @lru_cache(maxsize=1)
 def get_chroma_collection() -> chromadb.Collection:
+    # Per-embedder collection naming: swapping embedders never corrupts
+    # an existing index. Each embedder gets its own collection silo.
+    embedder = get_embedding_provider()
+    name = _safe_collection_name(embedder.name, embedder.embedding_dim)
     client = chromadb.PersistentClient(path=settings.chroma_persist_directory)
     return client.get_or_create_collection(
-        name=settings.chroma_collection_name,
+        name=name,
         metadata={"hnsw:space": "l2"},
     )
 
