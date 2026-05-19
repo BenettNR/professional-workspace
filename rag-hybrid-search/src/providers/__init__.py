@@ -5,11 +5,13 @@ Adding a new vendor means adding one new class here — no changes to retrieval
 or generation code.
 """
 from src.providers.embedding import EmbeddingProvider, VoyageEmbeddingProvider
+from src.providers.embedding_local import LocalSentenceTransformerEmbeddingProvider
 from src.providers.llm import AnthropicLLMProvider, LLMProvider
 
 __all__ = [
     "EmbeddingProvider",
     "VoyageEmbeddingProvider",
+    "LocalSentenceTransformerEmbeddingProvider",
     "LLMProvider",
     "AnthropicLLMProvider",
 ]
