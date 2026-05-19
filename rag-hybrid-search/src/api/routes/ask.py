@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from src.api.models import AskRequest, AskResponse, ChunkOut, CitationOut, ConfidenceOut
 from src.api.dependencies import get_embedder, get_generator, get_hybrid_retriever
 from src.generation.generator import RAGGenerator
-from src.ingestion.embedder import Embedder
+from src.providers.embedding import EmbeddingProvider
 from src.retrieval.fusion import HybridRetriever
 
 router = APIRouter()
@@ -15,7 +15,7 @@ router = APIRouter()
 @router.post("/ask", response_model=AskResponse)
 async def ask(
     request: AskRequest,
-    embedder: Embedder = Depends(get_embedder),
+    embedder: EmbeddingProvider = Depends(get_embedder),
     retriever: HybridRetriever = Depends(get_hybrid_retriever),
     generator: RAGGenerator = Depends(get_generator),
 ) -> AskResponse:
