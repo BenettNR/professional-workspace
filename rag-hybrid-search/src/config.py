@@ -90,7 +90,7 @@ class Settings(BaseSettings):
     processed_data_dir: str = "data/processed"
 
     @model_validator(mode="after")
-    def _autodetect_backends(self) -> "Settings":
+    def _autodetect_backends(self) -> Settings:
         """Default backends to offline variants if API keys are missing/placeholder.
 
         Explicit env-var values for EMBEDDING_BACKEND / LLM_BACKEND always win —

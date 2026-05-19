@@ -12,8 +12,8 @@ import structlog
 
 from src.models import RetrievedChunk
 from src.retrieval.dense import DenseRetriever
-from src.retrieval.sparse import SparseRetriever
 from src.retrieval.reranker import Reranker
+from src.retrieval.sparse import SparseRetriever
 
 log = structlog.get_logger(__name__)
 

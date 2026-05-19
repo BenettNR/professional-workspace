@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-
 # ── /v1/ask ───────────────────────────────────────────────────────────────────
 
 class AskRequest(BaseModel):
