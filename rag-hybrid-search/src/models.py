@@ -1,9 +1,8 @@
 """Shared domain models used across all pipeline layers."""
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class ChunkStrategy(str, Enum):
@@ -20,8 +19,8 @@ class DocumentMetadata:
     total_chunks: int      # total chunks produced from this document
     chunking_strategy: ChunkStrategy
     char_count: int
-    section_heading: Optional[str] = None
-    page_number: Optional[int] = None   # PDF pages only
+    section_heading: str | None = None
+    page_number: int | None = None   # PDF pages only
 
     def to_chroma_dict(self) -> dict:
         """Serialize to a flat dict compatible with ChromaDB metadata storage."""
@@ -60,12 +59,12 @@ class DocumentChunk:
 @dataclass
 class RetrievedChunk:
     chunk: DocumentChunk
-    dense_rank: Optional[int] = None
-    sparse_rank: Optional[int] = None
-    dense_score: Optional[float] = None
-    sparse_score: Optional[float] = None
+    dense_rank: int | None = None
+    sparse_rank: int | None = None
+    dense_score: float | None = None
+    sparse_score: float | None = None
     fusion_score: float = 0.0
-    rerank_score: Optional[float] = None
+    rerank_score: float | None = None
 
 
 @dataclass
@@ -97,7 +96,7 @@ class RAGResponse:
     confidence: ConfidenceScore
     retrieved_chunks: list[RetrievedChunk]
     insufficient_info: bool = False
-    missing_info_message: Optional[str] = None
+    missing_info_message: str | None = None
 
 
 @dataclass

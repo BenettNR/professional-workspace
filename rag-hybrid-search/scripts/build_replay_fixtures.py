@@ -48,7 +48,7 @@ def _call_hash(system: str, user: str, max_tokens: int) -> str:
 class _RecordingLLMProvider:
     """Wraps a real LLMProvider and captures every call."""
 
-    def __init__(self, wrapped: "LLMProvider") -> None:
+    def __init__(self, wrapped: LLMProvider) -> None:
         self._wrapped = wrapped
         self.name = wrapped.name
         self.calls: dict[str, str] = {}
@@ -67,8 +67,6 @@ async def _record(
 ) -> None:
     from src.api.dependencies import (
         get_chroma_collection,
-        get_citation_verifier,
-        get_confidence_scorer,
         get_dense_retriever,
         get_embedding_provider,
         get_hybrid_retriever,
