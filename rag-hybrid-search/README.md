@@ -10,7 +10,7 @@
 
 A question-answering service over your own documents that returns **grounded answers with verified citations** and **explicit confidence scores** — not just plausible-sounding prose. Built to demonstrate the engineering decisions that separate a working RAG demo from a production-ready RAG service.
 
-> **Status:** Functional scaffold. A five-PR portfolio-polish pass is in progress — see [Roadmap](#roadmap) and [docs/superpowers/specs/](docs/superpowers/specs/) for the design.
+**Design decisions are written down.** Every non-obvious choice has an [ADR](docs/adr/) explaining what we considered and why we picked this. The [eval harness](docs/eval-results.md) proves the architecture isn't cargo-cult — every stage of the pipeline is independently ablatable and measurably justified.
 
 ---
 
@@ -180,39 +180,44 @@ rag-hybrid-search/
 ├── data/
 │   ├── raw/                  Demo corpus (Nexus API docs, fictional)
 │   └── chroma/               Persistent vector index (gitignored)
-├── eval/golden_dataset.json  Eval questions + relevant-chunk labels
-├── docs/superpowers/         Design specs and implementation plans
-├── docker-compose.yml        api + frontend services
+├── eval/                     Golden dataset, demo questions, replay fixtures
+│   ├── golden_dataset.json
+│   ├── demo_questions.json   12 curated questions for offline-mode replay
+│   └── replay_fixtures.json  Recorded Claude responses (built once)
+├── docs/
+│   ├── adr/                  Architecture decision records (ADR-001..003)
+│   ├── eval-results.md       Published ablation results
+│   └── superpowers/          Design specs and implementation plans
+├── .github/
+│   ├── workflows/            CI (push/PR) + eval (workflow_dispatch)
+│   └── ISSUE_TEMPLATE/
+├── docker-compose.yml        api + frontend (live mode)
+├── docker-compose.demo.yml   overlay (offline mode)
 ├── Dockerfile.api            FastAPI container
 ├── Dockerfile.frontend       Streamlit container
-└── pyproject.toml            Deps + ruff + mypy-strict + pytest config
+├── Makefile                  demo, up, test, lint, typecheck, eval, …
+├── tasks.ps1                 PowerShell equivalent for Windows
+├── pyproject.toml            Deps + ruff + mypy-strict + pytest config
+└── .pre-commit-config.yaml   Local hooks mirroring CI gates
 ```
 
 ---
 
 ## Design decisions
 
-These are summarized here; full ADRs land in PR-5 of the polish pass.
+Full ADRs live in [`docs/adr/`](docs/adr/) following the Michael Nygard template (Context → Decision → Consequences → Alternatives).
 
-### Why hybrid (dense + sparse + rerank)?
+- **[ADR-001: Hybrid retrieval (dense + sparse + rerank)](docs/adr/001-hybrid-retrieval.md)** — Why dense alone fails on exact-keyword queries; why BM25 alone fails on paraphrase; why RRF + cross-encoder rerank is the right composition; alternatives considered (HyDE, ColBERT, ensemble rerankers) and why they were rejected.
+- **[ADR-002: LLM-as-judge for citation verification](docs/adr/002-citation-verification.md)** — Why per-citation verification matters more than composite confidence alone; the failure modes it catches (paraphrased claim with related chunk, multi-chunk drift, fabricated specificity); the cost/latency trade and the alternatives (rule-based, NLI, self-consistency).
+- **[ADR-003: Provider abstraction + offline demo mode](docs/adr/003-provider-abstraction.md)** — Why `Protocol` over `ABC`; how the offline mode (`sentence-transformers` + replay fixtures) lets reviewers run the full pipeline with zero API keys; the per-embedder Chroma collection naming that prevents index corruption when backends swap.
 
-Dense retrieval alone is weak on **exact-keyword** queries — error codes, API parameter names, version strings — because semantic similarity blurs them. BM25 alone is weak on **paraphrase** ("how do I sign in" vs "authentication setup"). RRF combines them without needing to calibrate score scales between methods. The cross-encoder rerank is a precision step: it sees query and candidate jointly (unlike bi-encoders) and reorders the top-20 to a top-5 with measurably better MRR. Each stage is independently ablatable — and PR-3 publishes the ablation table.
+A condensed version of why composite confidence is three-dimensional, in case you skip the ADRs:
 
-### Why LLM-as-judge for citation verification?
-
-Rule-based citation extraction (regex match the chunk text in the answer) is brittle — paraphrased claims fail. LLM-as-judge with a focused prompt (claim + passage → SUPPORTED / UNSUPPORTED / PARTIAL) catches paraphrase and partial support. It costs a Claude call per citation, which is the right trade for production: the alternative is shipping confident-sounding hallucinated citations.
-
-### Why composite confidence (3 dimensions, not 1)?
-
-- **Retrieval confidence** alone catches "we had nothing relevant to say"
-- **Citation coverage** alone catches "we hallucinated citations"
-- **Answer completeness** alone catches "we partially answered"
+- **Retrieval confidence** alone catches "we had nothing relevant to say".
+- **Citation coverage** alone catches "we hallucinated citations".
+- **Answer completeness** alone catches "we partially answered".
 
 Conflating them into one score loses the signal that tells you *what* went wrong. The API exposes all three plus a weighted composite (0.4 / 0.4 / 0.2) — clients can threshold on any dimension.
-
-### Why `pydantic-settings` for config?
-
-Twelve-factor: every tunable comes from the environment, every default is a typed Python value, validation happens at import time, and `--strict` mypy proves no settings access is mistyped.
 
 ---
 
@@ -257,8 +262,8 @@ This project is being polished into a portfolio piece via a five-PR series. Full
 | **PR-1: Provider abstraction** | ✅ Open ([#1](https://github.com/BenettNR/professional-workspace/pull/1)) | `EmbeddingProvider` / `LLMProvider` Protocols; pipeline depends on interfaces, not vendor SDKs. [Plan](docs/superpowers/plans/2026-05-19-pr1-provider-abstraction.md) |
 | **PR-2: Offline demo mode** | ✅ Open ([#2](https://github.com/BenettNR/professional-workspace/pull/2)) | Zero-API-key local mode: sentence-transformers embeddings + Claude replay fixtures. `make demo` runs in < 2 min on a fresh clone. [Plan](docs/superpowers/plans/2026-05-19-pr2-offline-demo-mode.md) |
 | **PR-3: Eval harness + results** | ✅ Open ([#3](https://github.com/BenettNR/professional-workspace/pull/3)) | 53-question golden dataset, ablation harness (dense-only / hybrid / hybrid+rerank), latency p50/p95 per stage, `make eval` reproducibility. Results: [`docs/eval-results.md`](docs/eval-results.md). [Plan](docs/superpowers/plans/2026-05-19-pr3-eval-harness.md) |
-| **PR-4: CI + quality gates** | 🚧 In progress | GitHub Actions: ruff + mypy --strict + pytest (3.11 / 3.12 matrix) + docker build. Green badges above. |
-| **PR-5: README + ADRs + screenshots** | Planned | Three Michael-Nygard ADRs, demo GIF, screenshots, finished README hero. |
+| **PR-4: CI + quality gates** | ✅ Open ([#4](https://github.com/BenettNR/professional-workspace/pull/4)) | GitHub Actions: ruff + mypy --strict + pytest (3.11 / 3.12 matrix) + docker build. Green badges above. |
+| **PR-5: README + ADRs + screenshots** | 🚧 In progress | Three Michael-Nygard ADRs, demo GIF, screenshots, finished README hero. [Plan](#) |
 
 ---
 
