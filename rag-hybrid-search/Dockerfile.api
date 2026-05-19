@@ -6,14 +6,20 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml .
-
-# Install all project dependencies
-RUN pip install --no-cache-dir -e ".[dev]"
-
 COPY src/ src/
+
+# Install runtime deps only (dev deps are for local development / CI test job)
+RUN pip install --no-cache-dir -e "."
+
+# Copy data files the API reads at runtime:
+#   - eval/{demo_questions,replay_fixtures}.json for offline-mode ReplayLLMProvider
+#   - data/raw/ corpus for first-run seeding (optional; volume can override)
+COPY eval/ eval/
+COPY data/raw/ data/raw/
 
 EXPOSE 8000
 
