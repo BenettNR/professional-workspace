@@ -14,7 +14,7 @@ import numpy as np
 from src.models import ChunkStrategy
 
 if TYPE_CHECKING:
-    from src.ingestion.embedder import Embedder
+    from src.providers.embedding import EmbeddingProvider
 
 
 class TextChunker(ABC):
@@ -81,7 +81,7 @@ class SemanticChunker(TextChunker):
     use when retrieval quality matters more than indexing speed.
     """
 
-    def __init__(self, embedder: Embedder) -> None:
+    def __init__(self, embedder: EmbeddingProvider) -> None:
         self._embedder = embedder
 
     @property
@@ -105,7 +105,7 @@ class SemanticChunker(TextChunker):
             end = min(len(sentences), i + window_size // 2 + 1)
             windows.append(" ".join(sentences[start:end]))
 
-        embeddings = await self._embedder.embed_texts(windows)
+        embeddings = await self._embedder.embed_documents(windows)
         emb_array = np.array(embeddings)
 
         # Cosine similarity between adjacent windows
@@ -129,7 +129,9 @@ class SemanticChunker(TextChunker):
         return chunks or [text]
 
 
-def get_chunker(strategy: ChunkStrategy, embedder: Embedder | None = None) -> TextChunker:
+def get_chunker(
+    strategy: ChunkStrategy, embedder: "EmbeddingProvider | None" = None
+) -> TextChunker:
     """Factory: return the appropriate chunker for the given strategy."""
     if strategy == ChunkStrategy.FIXED:
         return FixedSizeChunker()
@@ -137,6 +139,6 @@ def get_chunker(strategy: ChunkStrategy, embedder: Embedder | None = None) -> Te
         return RecursiveChunker()
     if strategy == ChunkStrategy.SEMANTIC:
         if embedder is None:
-            raise ValueError("SemanticChunker requires an Embedder instance")
+            raise ValueError("SemanticChunker requires an EmbeddingProvider instance")
         return SemanticChunker(embedder)
     raise ValueError(f"Unknown chunking strategy: {strategy}")
