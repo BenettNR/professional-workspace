@@ -48,6 +48,12 @@ class AnthropicLLMProvider:
                 system=system,
                 messages=[{"role": "user", "content": user}],
             )
-            return response.content[0].text
         except Exception as exc:
             raise ProviderError(f"Anthropic completion failed: {exc}") from exc
+
+        block = response.content[0]
+        if not isinstance(block, anthropic.types.TextBlock):
+            raise ProviderError(
+                f"Expected a TextBlock from Anthropic, got {type(block).__name__}"
+            )
+        return block.text

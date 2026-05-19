@@ -56,7 +56,7 @@ class VoyageEmbeddingProvider:
                 f"Unknown Voyage model '{model}'. "
                 f"Known models: {sorted(_VOYAGE_DIMS)}"
             )
-        self._client = voyageai.AsyncClient(api_key=api_key)
+        self._client = voyageai.AsyncClient(api_key=api_key)  # type: ignore[attr-defined]
         self._model = model
         self._batch_size = min(batch_size, 128)
         self.name = f"voyage:{model}"
@@ -72,9 +72,10 @@ class VoyageEmbeddingProvider:
             result = await self._client.embed(
                 texts, model=self._model, input_type=input_type
             )
-            return result.embeddings
         except Exception as exc:
             raise ProviderError(f"Voyage embedding call failed: {exc}") from exc
+        # Voyage's SDK return type is loosely typed; floats are what voyage-3 returns.
+        return [list(map(float, vec)) for vec in result.embeddings]
 
     async def embed_query(self, text: str) -> list[float]:
         embeddings = await self._embed([text], input_type="query")
