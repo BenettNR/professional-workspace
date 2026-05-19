@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -18,6 +20,12 @@ class Settings(BaseSettings):
     anthropic_api_key: str = Field(..., description="Anthropic API key for Claude Sonnet")
     llm_model: str = "claude-sonnet-4-6"
     llm_max_tokens: int = 2048
+
+    # ── Backend selection ─────────────────────────────────────────────────────
+    # 'voyage' uses the Voyage SDK; 'local' uses sentence-transformers (PR-2).
+    embedding_backend: Literal["voyage", "local"] = "voyage"
+    # 'anthropic' uses Claude; 'replay' uses fixture playback (PR-2).
+    llm_backend: Literal["anthropic", "replay"] = "anthropic"
 
     # ── ChromaDB ──────────────────────────────────────────────────────────────
     chroma_persist_directory: str = "data/chroma"
