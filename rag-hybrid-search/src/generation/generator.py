@@ -1,4 +1,4 @@
-"""Grounded generation with Claude Sonnet.
+"""Grounded generation with an LLMProvider.
 
 The system prompt instructs the LLM to:
   1. Answer only from the provided context blocks
@@ -7,15 +7,13 @@ The system prompt instructs the LLM to:
 """
 from __future__ import annotations
 
-import re
-
-import anthropic
 import structlog
 
-from src.exceptions import GenerationError
-from src.models import RAGResponse, RetrievedChunk
+from src.exceptions import GenerationError, ProviderError
 from src.generation.citation_verifier import CitationVerifier
 from src.generation.confidence import ConfidenceScorer
+from src.models import RAGResponse, RetrievedChunk
+from src.providers.llm import LLMProvider
 
 log = structlog.get_logger(__name__)
 
@@ -47,17 +45,17 @@ def _build_context_block(chunks: list[RetrievedChunk]) -> str:
 class RAGGenerator:
     def __init__(
         self,
-        api_key: str,
-        model: str,
+        llm: LLMProvider,
         max_tokens: int,
         confidence_threshold: float,
+        verifier: CitationVerifier,
+        scorer: ConfidenceScorer,
     ) -> None:
-        self._client = anthropic.AsyncAnthropic(api_key=api_key)
-        self._model = model
+        self._llm = llm
         self._max_tokens = max_tokens
         self._threshold = confidence_threshold
-        self._verifier = CitationVerifier(api_key=api_key, model=model)
-        self._scorer = ConfidenceScorer(api_key=api_key, model=model)
+        self._verifier = verifier
+        self._scorer = scorer
 
     async def generate(
         self,
@@ -65,22 +63,21 @@ class RAGGenerator:
         retrieved_chunks: list[RetrievedChunk],
     ) -> RAGResponse:
         if not retrieved_chunks:
-            return self._insufficient_response(question, retrieved_chunks, "No relevant documents found.")
+            return self._insufficient_response(
+                question, retrieved_chunks, "No relevant documents found."
+            )
 
         context_block = _build_context_block(retrieved_chunks)
         user_message = f"Context:\n\n{context_block}\n\nQuestion: {question}"
 
         try:
-            response = await self._client.messages.create(
-                model=self._model,
-                max_tokens=self._max_tokens,
+            answer_text = await self._llm.complete(
                 system=_SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": user_message}],
+                user=user_message,
+                max_tokens=self._max_tokens,
             )
-        except Exception as exc:
-            raise GenerationError(f"Claude API call failed: {exc}") from exc
-
-        answer_text = response.content[0].text
+        except ProviderError as exc:
+            raise GenerationError(str(exc)) from exc
 
         citations = await self._verifier.verify(answer_text, retrieved_chunks)
         confidence = await self._scorer.score(
@@ -95,7 +92,8 @@ class RAGGenerator:
         if insufficient:
             missing_msg = (
                 "Retrieval confidence is below threshold. "
-                "The answer may be incomplete — consider reviewing the source documents directly."
+                "The answer may be incomplete — consider reviewing the source "
+                "documents directly."
             )
             log.warning(
                 "low_confidence_response",
@@ -126,7 +124,7 @@ class RAGGenerator:
         chunks: list[RetrievedChunk],
         reason: str,
     ) -> RAGResponse:
-        from src.models import Citation, ConfidenceScore
+        from src.models import ConfidenceScore
 
         confidence = ConfidenceScore(
             retrieval_confidence=0.0,
