@@ -1,11 +1,13 @@
 """Shared domain models used across all pipeline layers."""
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
+from typing import Any
 
 
-class ChunkStrategy(str, Enum):
+class ChunkStrategy(StrEnum):
     FIXED = "fixed"
     RECURSIVE = "recursive"
     SEMANTIC = "semantic"
@@ -22,7 +24,7 @@ class DocumentMetadata:
     section_heading: str | None = None
     page_number: int | None = None   # PDF pages only
 
-    def to_chroma_dict(self) -> dict:
+    def to_chroma_dict(self) -> dict[str, Any]:
         """Serialize to a flat dict compatible with ChromaDB metadata storage."""
         return {
             "source_file": self.source_file,
@@ -36,7 +38,7 @@ class DocumentMetadata:
         }
 
     @classmethod
-    def from_chroma_dict(cls, data: dict) -> DocumentMetadata:
+    def from_chroma_dict(cls, data: Mapping[str, Any]) -> DocumentMetadata:
         return cls(
             source_file=data["source_file"],
             filename=data["filename"],

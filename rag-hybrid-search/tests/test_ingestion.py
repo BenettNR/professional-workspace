@@ -6,10 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from src.ingestion.loaders import DocumentLoaderRegistry, UnsupportedFormatError
 from src.ingestion.chunkers import FixedSizeChunker, RecursiveChunker
+from src.ingestion.loaders import DocumentLoaderRegistry, UnsupportedFormatError
 from src.models import ChunkStrategy
-
 
 # ── Loaders ───────────────────────────────────────────────────────────────────
 

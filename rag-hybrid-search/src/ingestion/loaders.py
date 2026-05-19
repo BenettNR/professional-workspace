@@ -8,6 +8,7 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Any
 
 from src.exceptions import DocumentLoadError, UnsupportedFormatError
 
@@ -17,7 +18,7 @@ class DocumentLoader(ABC):
     def supports(self, path: Path) -> bool: ...
 
     @abstractmethod
-    def load(self, path: Path) -> tuple[str, dict]:
+    def load(self, path: Path) -> tuple[str, dict[str, Any]]:
         """Return (content, extra_metadata_dict)."""
         ...
 
@@ -28,7 +29,7 @@ class MarkdownLoader(DocumentLoader):
     def supports(self, path: Path) -> bool:
         return path.suffix.lower() in self._EXTENSIONS
 
-    def load(self, path: Path) -> tuple[str, dict]:
+    def load(self, path: Path) -> tuple[str, dict[str, Any]]:
         try:
             content = path.read_text(encoding="utf-8")
         except OSError as exc:
@@ -42,7 +43,7 @@ class PlainTextLoader(DocumentLoader):
     def supports(self, path: Path) -> bool:
         return path.suffix.lower() == ".txt"
 
-    def load(self, path: Path) -> tuple[str, dict]:
+    def load(self, path: Path) -> tuple[str, dict[str, Any]]:
         try:
             return path.read_text(encoding="utf-8"), {}
         except OSError as exc:
@@ -55,7 +56,7 @@ class HTMLLoader(DocumentLoader):
     def supports(self, path: Path) -> bool:
         return path.suffix.lower() in self._EXTENSIONS
 
-    def load(self, path: Path) -> tuple[str, dict]:
+    def load(self, path: Path) -> tuple[str, dict[str, Any]]:
         try:
             from bs4 import BeautifulSoup
         except ImportError as exc:
@@ -80,7 +81,7 @@ class PDFLoader(DocumentLoader):
     def supports(self, path: Path) -> bool:
         return path.suffix.lower() == ".pdf"
 
-    def load(self, path: Path) -> tuple[str, dict]:
+    def load(self, path: Path) -> tuple[str, dict[str, Any]]:
         try:
             from pypdf import PdfReader
         except ImportError as exc:
@@ -106,7 +107,7 @@ class DocumentLoaderRegistry:
             PDFLoader(),
         ]
 
-    def load(self, path: Path) -> tuple[str, dict]:
+    def load(self, path: Path) -> tuple[str, dict[str, Any]]:
         for loader in self._loaders:
             if loader.supports(path):
                 return loader.load(path)

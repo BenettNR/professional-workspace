@@ -6,8 +6,15 @@ is skipped, preventing redundant context in retrieval results.
 """
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 import structlog
+
+from src.models import DocumentChunk
+
+if TYPE_CHECKING:
+    import chromadb
 
 log = structlog.get_logger(__name__)
 
@@ -17,7 +24,7 @@ class DuplicateDetector:
 
     def __init__(
         self,
-        collection,  # chromadb.Collection
+        collection: chromadb.Collection,
         threshold: float = 0.95,
     ) -> None:
         self._collection = collection
@@ -30,17 +37,17 @@ class DuplicateDetector:
             return False
 
         results = self._collection.query(
-            query_embeddings=[embedding],
+            query_embeddings=[embedding],  # type: ignore[arg-type]
             n_results=1,
             include=["distances"],
         )
-        distances = results.get("distances", [[]])[0]
+        distances_list = results.get("distances") or [[]]
+        distances = distances_list[0] if distances_list else []
         if not distances:
             return False
 
         # ChromaDB returns L2 distance by default; convert to cosine similarity.
-        # For unit vectors: cosine_sim = 1 - (L2² / 2)
-        # We normalise embeddings before comparison.
+        # For unit vectors: cosine_sim = 1 - (L2² / 2). We normalise before compare.
         emb = np.array(embedding)
         norm = np.linalg.norm(emb)
         if norm == 0:
@@ -48,7 +55,7 @@ class DuplicateDetector:
 
         l2_dist = distances[0]
         cosine_sim = 1.0 - (l2_dist ** 2) / 2.0
-        is_dup = cosine_sim > self._threshold
+        is_dup: bool = bool(cosine_sim > self._threshold)
 
         if is_dup:
             log.debug(
@@ -60,15 +67,15 @@ class DuplicateDetector:
 
     async def filter_duplicates(
         self,
-        chunks: list,          # list[DocumentChunk]
+        chunks: list[DocumentChunk],
         embeddings: list[list[float]],
-    ) -> tuple[list, list[list[float]]]:
+    ) -> tuple[list[DocumentChunk], list[list[float]]]:
         """Return (unique_chunks, unique_embeddings) after removing near-duplicates."""
-        unique_chunks = []
-        unique_embeddings = []
+        unique_chunks: list[DocumentChunk] = []
+        unique_embeddings: list[list[float]] = []
         skipped = 0
 
-        for chunk, embedding in zip(chunks, embeddings):
+        for chunk, embedding in zip(chunks, embeddings, strict=True):
             if self.is_duplicate(embedding):
                 skipped += 1
                 log.info("chunk_skipped_duplicate", chunk_id=chunk.id)

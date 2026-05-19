@@ -42,11 +42,11 @@ async def ingest_document(
 
     try:
         chunk_strategy = ChunkStrategy(strategy)
-    except ValueError:
+    except ValueError as exc:
         raise HTTPException(
             status_code=422,
             detail=f"Invalid strategy '{strategy}'. Choose: fixed, recursive, semantic",
-        )
+        ) from exc
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         tmp_path = Path(tmp.name)
