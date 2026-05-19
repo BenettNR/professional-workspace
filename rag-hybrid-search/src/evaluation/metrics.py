@@ -1,4 +1,4 @@
-"""Automated evaluation metrics using LLM-as-judge.
+"""LLM-as-judge evaluation metrics for the RAG pipeline.
 
 Four dimensions per test case:
   1. answer_correctness  — does the answer match the expected answer?
@@ -6,8 +6,12 @@ Four dimensions per test case:
   3. retrieval_relevance — were the right chunks retrieved?
   4. citation_accuracy   — do citations actually support their claims?
 
-Results are aggregated across the full golden dataset and can be compared
-across chunking strategies to drive architecture decisions.
+Each judge prompt elicits a single 0.0-1.0 score from the LLM; conservative
+fallback (0.5) on parse failure or provider error.
+
+The runner depends on `LLMProvider` (the Protocol introduced in PR-1) rather
+than the Anthropic SDK directly — so the same evaluator can run with replay
+fixtures or real Claude depending on backend configuration.
 """
 from __future__ import annotations
 
@@ -15,12 +19,13 @@ import asyncio
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
-import anthropic
 import structlog
 
 from src.evaluation.dataset import GoldenQuestion
 from src.models import RAGResponse
+from src.providers.llm import LLMProvider
 
 log = structlog.get_logger(__name__)
 
@@ -52,7 +57,7 @@ class QuestionResult:
 
 @dataclass
 class EvaluationResult:
-    chunking_strategy: str
+    config_name: str
     total_questions: int
     results: list[QuestionResult] = field(default_factory=list)
 
@@ -79,11 +84,12 @@ class EvaluationResult:
     def _avg(self, attr: str) -> float:
         if not self.results:
             return 0.0
-        return sum(getattr(r, attr) for r in self.results) / len(self.results)
+        total: float = sum(float(getattr(r, attr)) for r in self.results)
+        return total / len(self.results)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         return {
-            "chunking_strategy": self.chunking_strategy,
+            "config_name": self.config_name,
             "total_questions": self.total_questions,
             "avg_correctness": round(self.avg_correctness, 3),
             "avg_faithfulness": round(self.avg_faithfulness, 3),
@@ -116,10 +122,14 @@ class EvaluationResult:
             )
 
 
-class EvaluationRunner:
-    def __init__(self, api_key: str, model: str) -> None:
-        self._client = anthropic.AsyncAnthropic(api_key=api_key)
-        self._model = model
+class JudgeEvaluator:
+    """LLM-as-judge scorer. Constructed with an LLMProvider so the same
+    evaluator can run with replay fixtures or real Claude.
+    """
+
+    def __init__(self, llm: LLMProvider, max_tokens: int = 10) -> None:
+        self._llm = llm
+        self._max_tokens = max_tokens
 
     async def evaluate_response(
         self,
@@ -131,6 +141,8 @@ class EvaluationRunner:
             self._score_faithfulness(response),
             self._score_retrieval_relevance(golden, response),
         )
+        # citation_accuracy comes from the pipeline's own composite — no
+        # extra LLM call needed since CitationVerifier already scored it.
         citation_accuracy = response.confidence.citation_coverage
 
         return QuestionResult(
@@ -142,16 +154,15 @@ class EvaluationRunner:
             citation_accuracy=citation_accuracy,
         )
 
-    async def _judge(self, prompt: str) -> float:
+    async def _judge(self, user_prompt: str) -> float:
         try:
-            response = await self._client.messages.create(
-                model=self._model,
-                max_tokens=10,
+            text = await self._llm.complete(
                 system=_JUDGE_SYSTEM,
-                messages=[{"role": "user", "content": prompt}],
+                user=user_prompt,
+                max_tokens=self._max_tokens,
             )
-            return float(response.content[0].text.strip())
-        except Exception as exc:
+            return float(text.strip())
+        except (Exception,) as exc:
             log.warning("judge_call_failed", error=str(exc))
             return 0.5
 
@@ -161,27 +172,35 @@ class EvaluationRunner:
         prompt = (
             f"Expected answer: {golden.expected_answer}\n\n"
             f"Actual answer: {response.answer}\n\n"
-            "Score how correctly the actual answer matches the expected answer (0.0–1.0)."
+            "Score how correctly the actual answer matches the expected answer (0.0-1.0)."
         )
         return await self._judge(prompt)
 
     async def _score_faithfulness(self, response: RAGResponse) -> float:
-        context = "\n\n".join(rc.chunk.content[:300] for rc in response.retrieved_chunks[:5])
+        context = "\n\n".join(
+            rc.chunk.content[:300] for rc in response.retrieved_chunks[:5]
+        )
         prompt = (
             f"Context:\n{context}\n\n"
             f"Answer:\n{response.answer[:500]}\n\n"
-            "Score how faithfully every claim in the answer is grounded in the context (0.0–1.0)."
+            "Score how faithfully every claim in the answer is grounded in the context (0.0-1.0)."
         )
         return await self._judge(prompt)
 
     async def _score_retrieval_relevance(
         self, golden: GoldenQuestion, response: RAGResponse
     ) -> float:
-        retrieved_sources = [rc.chunk.metadata.filename for rc in response.retrieved_chunks]
+        retrieved_sources = [
+            rc.chunk.metadata.filename for rc in response.retrieved_chunks
+        ]
         prompt = (
             f"Question: {golden.question}\n"
             f"Expected sources: {golden.expected_sources}\n"
             f"Retrieved sources: {retrieved_sources}\n\n"
-            "Score how relevant the retrieved sources are for answering this question (0.0–1.0)."
+            "Score how relevant the retrieved sources are for answering this question (0.0-1.0)."
         )
         return await self._judge(prompt)
+
+
+# Back-compat alias — the old name; same class.
+EvaluationRunner = JudgeEvaluator
