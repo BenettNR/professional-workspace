@@ -1,7 +1,26 @@
+"""Application settings.
+
+Loaded from environment variables (or `.env` via pydantic-settings).
+
+Auto-detection: if VOYAGE_API_KEY or ANTHROPIC_API_KEY is missing or is
+still set to the .env.example placeholder, the corresponding backend
+auto-switches to its offline variant (`local` for embeddings, `replay`
+for LLM). An explicit EMBEDDING_BACKEND / LLM_BACKEND env var always wins.
+"""
+from __future__ import annotations
+
+import os
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _is_placeholder(key: str) -> bool:
+    """Return True if a key value is missing or still the .env.example placeholder."""
+    if not key:
+        return True
+    return key.startswith("pa-...") or key.startswith("sk-ant-...")
 
 
 class Settings(BaseSettings):
@@ -12,19 +31,19 @@ class Settings(BaseSettings):
     )
 
     # ── Voyage AI (embeddings) ────────────────────────────────────────────────
-    voyage_api_key: str = Field(..., description="Voyage AI API key for embeddings")
+    voyage_api_key: str = Field(default="", description="Voyage AI API key (empty → local backend)")
     embedding_model: str = "voyage-3"
     embedding_batch_size: int = 128  # Voyage AI per-request limit
 
     # ── Anthropic (generation + LLM-as-judge) ─────────────────────────────────
-    anthropic_api_key: str = Field(..., description="Anthropic API key for Claude Sonnet")
+    anthropic_api_key: str = Field(default="", description="Anthropic API key (empty → replay backend)")
     llm_model: str = "claude-sonnet-4-6"
     llm_max_tokens: int = 2048
 
     # ── Backend selection ─────────────────────────────────────────────────────
-    # 'voyage' uses the Voyage SDK; 'local' uses sentence-transformers (PR-2).
+    # 'voyage' uses the Voyage SDK; 'local' uses sentence-transformers.
     embedding_backend: Literal["voyage", "local"] = "voyage"
-    # 'anthropic' uses Claude; 'replay' uses fixture playback (PR-2).
+    # 'anthropic' uses Claude; 'replay' uses fixture playback.
     llm_backend: Literal["anthropic", "replay"] = "anthropic"
 
     # ── ChromaDB ──────────────────────────────────────────────────────────────
@@ -62,11 +81,31 @@ class Settings(BaseSettings):
     api_port: int = 8000
     api_debug: bool = False
 
+    # ── Demo/offline mode ─────────────────────────────────────────────────────
+    replay_fixtures_path: str = "eval/replay_fixtures.json"
+    demo_questions_path: str = "eval/demo_questions.json"
+
     # ── Data paths ────────────────────────────────────────────────────────────
     raw_data_dir: str = "data/raw"
     processed_data_dir: str = "data/processed"
 
+    @model_validator(mode="after")
+    def _autodetect_backends(self) -> "Settings":
+        """Default backends to offline variants if API keys are missing/placeholder.
 
-# pydantic-settings populates required fields from the environment at runtime;
-# mypy doesn't model this and would otherwise demand they be passed explicitly.
-settings = Settings()  # type: ignore[call-arg]
+        Explicit env-var values for EMBEDDING_BACKEND / LLM_BACKEND always win —
+        we only flip the default if the user hasn't explicitly chosen.
+        """
+        embedding_explicit = "EMBEDDING_BACKEND" in os.environ
+        llm_explicit = "LLM_BACKEND" in os.environ
+
+        if not embedding_explicit and _is_placeholder(self.voyage_api_key):
+            object.__setattr__(self, "embedding_backend", "local")
+        if not llm_explicit and _is_placeholder(self.anthropic_api_key):
+            object.__setattr__(self, "llm_backend", "replay")
+        return self
+
+
+# pydantic-settings populates fields from the environment at runtime;
+# all fields have defaults now (empty string for keys), so Settings() is callable.
+settings = Settings()
