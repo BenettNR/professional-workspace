@@ -29,6 +29,7 @@ log = structlog.get_logger()
 
 async def main(strategy: str, clean: bool, docs_dir: Path) -> None:
     import chromadb
+
     from src.ingestion.indexer import DocumentIndexer
     from src.providers.embedding import VoyageEmbeddingProvider
 
@@ -93,8 +94,8 @@ async def main(strategy: str, clean: bool, docs_dir: Path) -> None:
     print(f"  Strategy: {strategy}")
     print(f"  Duplicates skipped: {total_skipped}")
     print(f"  Collection size: {collection.count()}")
-    print(f"\nStart the API:      uvicorn src.api.main:app --reload")
-    print(f"Start the frontend: streamlit run frontend/app.py")
+    print("\nStart the API:      uvicorn src.api.main:app --reload")
+    print("Start the frontend: streamlit run frontend/app.py")
 
 
 if __name__ == "__main__":

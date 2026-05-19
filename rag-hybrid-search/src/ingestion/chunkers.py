@@ -130,7 +130,7 @@ class SemanticChunker(TextChunker):
 
 
 def get_chunker(
-    strategy: ChunkStrategy, embedder: "EmbeddingProvider | None" = None
+    strategy: ChunkStrategy, embedder: EmbeddingProvider | None = None
 ) -> TextChunker:
     """Factory: return the appropriate chunker for the given strategy."""
     if strategy == ChunkStrategy.FIXED:

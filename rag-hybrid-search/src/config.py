@@ -67,4 +67,6 @@ class Settings(BaseSettings):
     processed_data_dir: str = "data/processed"
 
 
-settings = Settings()
+# pydantic-settings populates required fields from the environment at runtime;
+# mypy doesn't model this and would otherwise demand they be passed explicitly.
+settings = Settings()  # type: ignore[call-arg]
