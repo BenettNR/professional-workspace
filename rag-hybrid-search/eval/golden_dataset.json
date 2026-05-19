@@ -1,0 +1,490 @@
+{
+  "version": "1.0",
+  "corpus": "nexus-api-docs",
+  "description": "50+ handcrafted Q&A pairs for evaluating the RAG pipeline across difficulty levels and question categories.",
+  "categories": {
+    "simple_lookup": "Direct factual questions with answers in a single document",
+    "multi_hop": "Questions requiring information from multiple documents",
+    "unanswerable": "Questions whose answers are not in the corpus",
+    "ambiguous": "Questions requiring clarification or with partial answers"
+  },
+  "questions": [
+    {
+      "id": "q001",
+      "question": "What is the rate limit for Standard tier requests per minute?",
+      "expected_answer": "Standard tier allows 1,000 requests per minute.",
+      "expected_sources": ["rate-limiting.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": "Direct table lookup"
+    },
+    {
+      "id": "q002",
+      "question": "What error code is returned when a stream already exists?",
+      "expected_answer": "NXE-1001 (StreamAlreadyExistsError) is returned when a stream with the same name already exists in the workspace.",
+      "expected_sources": ["error-codes.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": "BM25 should excel here — exact error code match"
+    },
+    {
+      "id": "q003",
+      "question": "How do I authenticate API requests in v2?",
+      "expected_answer": "Use the Authorization header with a Bearer token: Authorization: Bearer nxk_live_...",
+      "expected_sources": ["authentication.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q004",
+      "question": "What is the maximum number of events in a batch publish operation?",
+      "expected_answer": "A batch can contain up to 1,000 events. Exceeding this limit raises NXE-2005 (BatchTooLargeError).",
+      "expected_sources": ["api-reference.md", "error-codes.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q005",
+      "question": "What format do event IDs use in API v2?",
+      "expected_answer": "v2 event IDs use the evt_ prefix followed by a base32-encoded ULID, e.g. evt_01hx8k3s5v3n4d0e8f6g7h9j2k. They are sortable and globally unique.",
+      "expected_sources": ["data-formats.md", "migration.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q006",
+      "question": "What is the maximum event payload size?",
+      "expected_answer": "Each event is limited to 1 MB. Exceeding this limit returns NXE-2002 (PayloadTooLargeError).",
+      "expected_sources": ["error-codes.md", "troubleshooting.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": "BM25 critical for '1 MB' exact match"
+    },
+    {
+      "id": "q007",
+      "question": "How long are cursor tokens valid after being issued?",
+      "expected_answer": "Cursors are valid for 10 minutes after issue.",
+      "expected_sources": ["data-formats.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q008",
+      "question": "What is the Developer tier daily event limit?",
+      "expected_answer": "Developer tier allows 100,000 events per day.",
+      "expected_sources": ["overview.md", "rate-limiting.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q009",
+      "question": "What environment variable overrides the API base URL?",
+      "expected_answer": "NEXUS_BASE_URL overrides the API base URL, which is useful for proxies.",
+      "expected_sources": ["configuration.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": "BM25 critical for exact env var name"
+    },
+    {
+      "id": "q010",
+      "question": "What HTTP status code does NXE-5001 return?",
+      "expected_answer": "NXE-5001 (RateLimitExceeded) returns HTTP 429 Too Many Requests.",
+      "expected_sources": ["error-codes.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q011",
+      "question": "What is the stream name pattern/regex required by Nexus?",
+      "expected_answer": "Stream names must match ^[a-z][a-z0-9._-]{2,127}$. They must start with a lowercase letter, be 3–128 characters, and contain only lowercase letters, digits, dots, underscores, and hyphens.",
+      "expected_sources": ["api-reference.md", "error-codes.md", "troubleshooting.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "BM25 critical for regex pattern exact match"
+    },
+    {
+      "id": "q012",
+      "question": "What compression algorithms does Nexus support?",
+      "expected_answer": "Nexus supports gzip (default), zstd (preferred for bulk, ~30% better ratio), and none (uncompressed).",
+      "expected_sources": ["data-formats.md", "configuration.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q013",
+      "question": "How many retry attempts does Nexus make for failed webhook deliveries?",
+      "expected_answer": "Nexus makes up to 5 delivery attempts: immediate, then after 1 minute, 5 minutes, 30 minutes, and 2 hours.",
+      "expected_sources": ["webhooks.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q014",
+      "question": "What is the default request timeout for the Nexus SDK?",
+      "expected_answer": "The default request timeout is 30 seconds (NEXUS_TIMEOUT=30).",
+      "expected_sources": ["configuration.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q015",
+      "question": "What scope is required to publish events to a stream?",
+      "expected_answer": "The events:publish scope is required to write events to streams.",
+      "expected_sources": ["authentication.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": "BM25 critical — exact scope name"
+    },
+    {
+      "id": "q016",
+      "question": "What NEXUS_ environment variable controls the consumer group name?",
+      "expected_answer": "NEXUS_CONSUMER_GROUP sets the consumer group name for cooperative consumption.",
+      "expected_sources": ["configuration.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q017",
+      "question": "What happens to the old webhook secret after rotation?",
+      "expected_answer": "The old secret remains valid for 60 seconds after rotation to allow in-flight requests to complete.",
+      "expected_sources": ["webhooks.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q018",
+      "question": "What is the burst limit for the Standard tier?",
+      "expected_answer": "Standard tier has a burst limit of 5,000 events per 10-second window. Exceeding this triggers NXE-5002 (BurstLimitExceeded).",
+      "expected_sources": ["rate-limiting.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q019",
+      "question": "What is the `X-RateLimit-Window` header value for the Standard tier?",
+      "expected_answer": "The X-RateLimit-Window header shows 60, meaning the rate limit window is 60 seconds.",
+      "expected_sources": ["rate-limiting.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q020",
+      "question": "What does the `NEXUS_FLUSH_INTERVAL` environment variable control?",
+      "expected_answer": "NEXUS_FLUSH_INTERVAL controls the auto-flush interval for buffered publishers, defaulting to 0.1 seconds.",
+      "expected_sources": ["configuration.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q021",
+      "question": "How do I upgrade my Standard tier rate limit and what is the process?",
+      "expected_answer": "To increase Standard tier limits you must upgrade to Enterprise via the billing dashboard. For Enterprise, contact your account manager or open a support ticket at support.nexus.io with your workspace ID and expected throughput requirements.",
+      "expected_sources": ["rate-limiting.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q022",
+      "question": "I'm migrating from v1 to v2 — what changes do I need to make to event consumption code?",
+      "expected_answer": "Replace events.read(stream, offset=0) with events.consume(stream, from_sequence=0). The offset parameter is renamed to from_sequence. Also update the auth header from X-Nexus-API-Key to Authorization: Bearer.",
+      "expected_sources": ["migration.md", "api-reference.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q023",
+      "question": "If I get NXE-4003 on a pipeline.write operation, what are the possible causes and fixes?",
+      "expected_answer": "NXE-4003 (InsufficientScopeError) means the API key lacks the required scope. For pipeline write operations, the key needs pipelines:write scope. Create a new scoped key with that permission or use a key with full (*) scope.",
+      "expected_sources": ["error-codes.md", "authentication.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q024",
+      "question": "How do I safely handle NXE-5004 errors when publishing a batch?",
+      "expected_answer": "NXE-5004 (UpstreamTimeout) is ambiguous — the server may or may not have persisted the events. Use an idempotency_key on batch publishes, then check the stream for the events before retrying.",
+      "expected_sources": ["troubleshooting.md", "api-reference.md"],
+      "category": "multi_hop",
+      "difficulty": "hard",
+      "notes": ""
+    },
+    {
+      "id": "q025",
+      "question": "What are the SLA uptime commitments and what tier do I need for 99.99% uptime?",
+      "expected_answer": "Enterprise tier provides 99.99% monthly uptime with dedicated support SLA. Standard tier offers 99.9%. Developer tier has no SLA.",
+      "expected_sources": ["overview.md"],
+      "category": "multi_hop",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q026",
+      "question": "I'm on Developer tier and hitting rate limits. What are my publish limits and how do I increase them?",
+      "expected_answer": "Developer tier limits are 60 requests/minute, 500 publish events/minute, and 100,000 events/day. To increase limits, you must upgrade to Standard or Enterprise tier via the billing dashboard.",
+      "expected_sources": ["rate-limiting.md", "overview.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q027",
+      "question": "What v1 event IDs can still be queried after migrating to v2 and for how long?",
+      "expected_answer": "v1 UUID-format event IDs remain queryable via events.get() for 12 months after migration.",
+      "expected_sources": ["migration.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q028",
+      "question": "How should I implement webhook signature verification and what algorithm does Nexus use?",
+      "expected_answer": "Nexus uses HMAC-SHA256. Compute sha256= + hmac.new(secret, payload_bytes, sha256).hexdigest() and use hmac.compare_digest() to prevent timing attacks.",
+      "expected_sources": ["webhooks.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q029",
+      "question": "Can I use Protobuf schemas with Nexus streams and how do I set it up?",
+      "expected_answer": "Yes. Register your .proto definition in the Schema Registry using client.schemas.register(format='proto'), then create the stream with the schema ID using StreamConfig(schema=f'avro:{schema.id}'). Note: the docs show avro prefix but same approach applies to proto.",
+      "expected_sources": ["data-formats.md"],
+      "category": "multi_hop",
+      "difficulty": "hard",
+      "notes": ""
+    },
+    {
+      "id": "q030",
+      "question": "What is JWT authentication in Nexus and which tier supports it?",
+      "expected_answer": "Enterprise workspaces can use short-lived JWTs signed with a workspace RSA-2048 private key. Token TTL is configurable from 60 seconds to 24 hours.",
+      "expected_sources": ["authentication.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q031",
+      "question": "How do I delete a stream that has active consumers?",
+      "expected_answer": "Pass force=True to streams.delete(). Without force=True, it raises NXE-1005 (StreamHasActiveConsumersError).",
+      "expected_sources": ["api-reference.md", "error-codes.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q032",
+      "question": "When does the v1 API reach end of life and what happens to requests after that date?",
+      "expected_answer": "API v1 reaches end-of-life on 2026-03-01. After that date, v1 requests return NXE-5010 with message 'API v1 has reached end-of-life.'",
+      "expected_sources": ["migration.md", "overview.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q033",
+      "question": "What metrics can I retrieve for a pipeline and what time windows are supported?",
+      "expected_answer": "pipelines.get_metrics() returns throughput, latency p50/p95/p99, and error rate. Supported windows are 5m, 1h, 24h, and 7d.",
+      "expected_sources": ["api-reference.md"],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q034",
+      "question": "What is the difference between strict, per_partition, and best_effort stream ordering modes?",
+      "expected_answer": "The documentation mentions these ordering modes (strict, per_partition, best_effort) as stream configuration options but does not define the differences between them.",
+      "expected_sources": ["configuration.md"],
+      "category": "unanswerable",
+      "difficulty": "hard",
+      "notes": "Partially in corpus — ordering modes listed but not explained"
+    },
+    {
+      "id": "q035",
+      "question": "What is the maximum size of a Nexus workspace?",
+      "expected_answer": "The documentation does not specify a maximum workspace size.",
+      "expected_sources": [],
+      "category": "unanswerable",
+      "difficulty": "easy",
+      "notes": "Not in corpus"
+    },
+    {
+      "id": "q036",
+      "question": "What programming languages does the Nexus SDK support?",
+      "expected_answer": "The overview mentions Python, Go, TypeScript, and Java SDKs, but the documentation only covers the Python SDK in detail.",
+      "expected_sources": ["overview.md"],
+      "category": "unanswerable",
+      "difficulty": "easy",
+      "notes": "Partially answerable"
+    },
+    {
+      "id": "q037",
+      "question": "How do I set up multi-region replication for a Nexus stream?",
+      "expected_answer": "The documentation does not cover multi-region replication.",
+      "expected_sources": [],
+      "category": "unanswerable",
+      "difficulty": "hard",
+      "notes": ""
+    },
+    {
+      "id": "q038",
+      "question": "What is the pricing for the Standard tier?",
+      "expected_answer": "The documentation does not include pricing information.",
+      "expected_sources": [],
+      "category": "unanswerable",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q039",
+      "question": "Does Nexus support GraphQL subscriptions?",
+      "expected_answer": "The documentation does not mention GraphQL support.",
+      "expected_sources": [],
+      "category": "unanswerable",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q040",
+      "question": "What is the maximum retention period for events in the Standard tier?",
+      "expected_answer": "The documentation mentions that retention can be configured (e.g. RetentionPolicy(days=30)) but does not specify the maximum allowed retention period for each tier.",
+      "expected_sources": ["configuration.md"],
+      "category": "unanswerable",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q041",
+      "question": "How do I delete an event after it has been published?",
+      "expected_answer": "The documentation does not describe an API for deleting individual events. Events are removed automatically per retention policy.",
+      "expected_sources": [],
+      "category": "unanswerable",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q042",
+      "question": "What is the NXE error code for an expired event?",
+      "expected_answer": "NXE-2011 (EventExpiredError) is returned when an event has been deleted per the retention policy.",
+      "expected_sources": ["error-codes.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q043",
+      "question": "What rate limit response headers are returned and what does each mean?",
+      "expected_answer": "Four headers: X-RateLimit-Limit (max requests in window), X-RateLimit-Remaining (requests left), X-RateLimit-Reset (Unix timestamp of reset), X-RateLimit-Window (window duration in seconds).",
+      "expected_sources": ["rate-limiting.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q044",
+      "question": "Can I pause and resume a pipeline without losing processing state?",
+      "expected_answer": "Yes, pipelines.pause() and pipelines.resume() allow pausing and resuming without destroying state.",
+      "expected_sources": ["api-reference.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q045",
+      "question": "How does Nexus handle v1 stream names that don't conform to v2 naming rules?",
+      "expected_answer": "Existing streams with non-conforming names continue to work after migration, but new streams with non-conforming names cannot be created in v2.",
+      "expected_sources": ["migration.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q046",
+      "question": "How is the exponential backoff for rate limit retries recommended to be implemented?",
+      "expected_answer": "The docs recommend using the retry_after value from RateLimitError plus random.uniform(0, 1) jitter, looping up to max_retries times.",
+      "expected_sources": ["rate-limiting.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q047",
+      "question": "What command migrates a v1 YAML pipeline spec to v2 JSON format?",
+      "expected_answer": "nexus migrate-pipeline --spec pipeline.yaml --output pipeline.json",
+      "expected_sources": ["migration.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": "BM25 critical — exact CLI command"
+    },
+    {
+      "id": "q048",
+      "question": "Can I query a stream for events using a timestamp as the starting point?",
+      "expected_answer": "Yes. events.consume() accepts from_timestamp (RFC 3339) as an alternative to from_sequence. Exactly one of the two must be specified.",
+      "expected_sources": ["api-reference.md"],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q049",
+      "question": "How does workspace federation work and how do I enable it?",
+      "expected_answer": "The documentation mentions workspace federation as the mechanism for sharing resources across workspaces but does not explain how to configure or enable it.",
+      "expected_sources": ["overview.md"],
+      "category": "ambiguous",
+      "difficulty": "hard",
+      "notes": "Mentioned but not explained"
+    },
+    {
+      "id": "q050",
+      "question": "Is the Nexus API GDPR compliant?",
+      "expected_answer": "The documentation does not include any information about GDPR compliance.",
+      "expected_sources": [],
+      "category": "unanswerable",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q051",
+      "question": "What is the idempotency_key parameter in events.publish_batch and when should I use it?",
+      "expected_answer": "idempotency_key makes batch publishes safe to retry. After an NXE-5004 timeout (which is ambiguous), using the same key on retry prevents duplicate events from being persisted.",
+      "expected_sources": ["troubleshooting.md"],
+      "category": "multi_hop",
+      "difficulty": "hard",
+      "notes": ""
+    },
+    {
+      "id": "q052",
+      "question": "Where can Enterprise customers get 24/7 emergency support?",
+      "expected_answer": "Enterprise customers can reach 24/7 emergency support at +1-800-NEXUS-OPS.",
+      "expected_sources": ["troubleshooting.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q053",
+      "question": "What is the difference between a live key and a test key?",
+      "expected_answer": "Live keys (nxk_live_ prefix) provide full API access for production. Test keys (nxk_test_ prefix) are sandboxed — events are not billed.",
+      "expected_sources": ["authentication.md"],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    }
+  ]
+}
