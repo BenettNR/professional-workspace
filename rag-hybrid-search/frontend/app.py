@@ -10,7 +10,9 @@ Features:
 """
 from __future__ import annotations
 
+import json
 import os
+from pathlib import Path
 
 import httpx
 import plotly.graph_objects as go
@@ -23,6 +25,63 @@ st.set_page_config(
     page_icon="🔍",
     layout="wide",
 )
+
+
+def _is_offline_mode() -> tuple[bool, str, str]:
+    """Detect offline mode by re-applying the same auto-detection rules as the API.
+
+    Returns (offline, embedding_backend, llm_backend).
+    """
+    embedding_backend = os.getenv("EMBEDDING_BACKEND", "").strip()
+    llm_backend = os.getenv("LLM_BACKEND", "").strip()
+    voyage_key = os.getenv("VOYAGE_API_KEY", "").strip()
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
+
+    if not embedding_backend:
+        embedding_backend = (
+            "local"
+            if (not voyage_key or voyage_key.startswith("pa-..."))
+            else "voyage"
+        )
+    if not llm_backend:
+        llm_backend = (
+            "replay"
+            if (not anthropic_key or anthropic_key.startswith("sk-ant-..."))
+            else "anthropic"
+        )
+
+    offline = embedding_backend == "local" or llm_backend == "replay"
+    return offline, embedding_backend, llm_backend
+
+
+def _load_demo_questions() -> list[str]:
+    path = Path(
+        os.getenv("DEMO_QUESTIONS_PATH", "eval/demo_questions.json")
+    )
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return [q["question"] for q in data.get("questions", [])]
+    except (OSError, json.JSONDecodeError):
+        return []
+
+
+_OFFLINE, _EMB_BACKEND, _LLM_BACKEND = _is_offline_mode()
+if _OFFLINE:
+    st.warning(
+        f"**🟡 Demo mode (offline)** — `embedding_backend={_EMB_BACKEND}`, "
+        f"`llm_backend={_LLM_BACKEND}`. Answers are replayed from a recorded "
+        f"fixture set. Set `VOYAGE_API_KEY` and `ANTHROPIC_API_KEY` in `.env` "
+        f"for live mode."
+    )
+    _DEMO_QUESTIONS = _load_demo_questions()
+    if _DEMO_QUESTIONS:
+        with st.expander(
+            f"Available demo questions ({len(_DEMO_QUESTIONS)})", expanded=False
+        ):
+            for q in _DEMO_QUESTIONS:
+                st.write(f"- {q}")
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
