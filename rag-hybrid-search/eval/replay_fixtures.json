@@ -1,0 +1,9 @@
+{
+  "_meta": {
+    "description": "Recorded Claude responses keyed by SHA256 of (system + '\\n' + user + '\\n' + max_tokens). Populated by `make replay-fixtures` — initially empty; the offline ReplayLLMProvider falls back to a clear diagnostic response when the lookup misses. Do not edit by hand.",
+    "fixture_format_version": 1,
+    "recorded_at": null,
+    "git_commit": null
+  },
+  "calls": {}
+}

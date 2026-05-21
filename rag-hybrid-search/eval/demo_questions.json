@@ -1,0 +1,78 @@
+{
+  "description": "Curated questions over the bundled Nexus API documentation corpus. These are the canonical demo questions for offline mode — ReplayLLMProvider returns recorded Claude responses for any (system, user) pair derived from running the full pipeline on one of these questions. To regenerate the replay fixtures with fresh Claude responses, set VOYAGE_API_KEY and ANTHROPIC_API_KEY and run `make replay-fixtures`.",
+  "corpus": "data/raw/nexus-api-docs/",
+  "questions": [
+    {
+      "id": "q01",
+      "question": "What is the default rate limit for the standard tier?",
+      "query_type": "factual",
+      "expected_source": "rate-limiting.md"
+    },
+    {
+      "id": "q02",
+      "question": "Which prefix do live API keys use?",
+      "query_type": "factual",
+      "expected_source": "authentication.md"
+    },
+    {
+      "id": "q03",
+      "question": "What is the maximum payload size for a single event?",
+      "query_type": "factual",
+      "expected_source": "error-codes.md"
+    },
+    {
+      "id": "q04",
+      "question": "How many events can a single batch contain?",
+      "query_type": "factual",
+      "expected_source": "error-codes.md"
+    },
+    {
+      "id": "q05",
+      "question": "How do I create a new API key with limited scopes?",
+      "query_type": "procedural",
+      "expected_source": "authentication.md"
+    },
+    {
+      "id": "q06",
+      "question": "How do I set up a webhook for pipeline errors?",
+      "query_type": "procedural",
+      "expected_source": "webhooks.md"
+    },
+    {
+      "id": "q07",
+      "question": "What is the recommended retry strategy when I hit a rate limit?",
+      "query_type": "procedural",
+      "expected_source": "rate-limiting.md"
+    },
+    {
+      "id": "q08",
+      "question": "What is the difference between a live API key and a test API key?",
+      "query_type": "comparative",
+      "expected_source": "authentication.md"
+    },
+    {
+      "id": "q09",
+      "question": "How do the developer and standard tier rate limits compare?",
+      "query_type": "comparative",
+      "expected_source": "rate-limiting.md"
+    },
+    {
+      "id": "q10",
+      "question": "What does error code NXE-1004 mean?",
+      "query_type": "error-lookup",
+      "expected_source": "error-codes.md"
+    },
+    {
+      "id": "q11",
+      "question": "What HTTP status code is returned for an InvalidEventPayloadError?",
+      "query_type": "error-lookup",
+      "expected_source": "error-codes.md"
+    },
+    {
+      "id": "q12",
+      "question": "What does StreamHasActiveConsumersError indicate and how do I resolve it?",
+      "query_type": "error-lookup",
+      "expected_source": "error-codes.md"
+    }
+  ]
+}

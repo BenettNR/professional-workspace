@@ -77,7 +77,7 @@ class DocumentIndexer:
     def __init__(
         self,
         embedder: EmbeddingProvider,
-        collection: "chromadb.Collection",
+        collection: chromadb.Collection,
         bm25_index_path: Path,
         dedup_threshold: float = 0.95,
         chunk_size: int = 512,

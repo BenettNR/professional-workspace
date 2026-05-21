@@ -1,0 +1,32 @@
+# Overlay for offline demo mode. Use with:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.demo.yml up --build
+#
+# (equivalently: `make demo` or `./tasks.ps1 demo`)
+#
+# Forces both backends to their offline variants regardless of any .env file,
+# so the demo runs identically on every machine and never reaches Voyage or
+# Anthropic.
+
+services:
+  api:
+    environment:
+      # Auto-detect would do this for us, but pinning is explicit and clear.
+      EMBEDDING_BACKEND: local
+      LLM_BACKEND: replay
+      # Real keys explicitly cleared; offline mode requires neither.
+      VOYAGE_API_KEY: ""
+      ANTHROPIC_API_KEY: ""
+      # Demo fixtures + questions live in the repo; mounted via the base file.
+      REPLAY_FIXTURES_PATH: /app/eval/replay_fixtures.json
+      DEMO_QUESTIONS_PATH: /app/eval/demo_questions.json
+    # No `env_file` here — explicit settings above are enough.
+
+  frontend:
+    environment:
+      EMBEDDING_BACKEND: local
+      LLM_BACKEND: replay
+      VOYAGE_API_KEY: ""
+      ANTHROPIC_API_KEY: ""
+      DEMO_QUESTIONS_PATH: /app/eval/demo_questions.json
+      API_BASE_URL: http://api:8000
