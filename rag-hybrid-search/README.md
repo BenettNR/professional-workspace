@@ -22,6 +22,12 @@ Three failure modes RAG systems most often ship with, and how this addresses the
 
 ---
 
+## Eval results
+
+The pipeline ships with a reproducible ablation harness that compares **dense-only**, **hybrid** (dense + sparse + RRF), and **hybrid+rerank** configurations on a 53-question golden dataset over the Nexus API corpus. Metrics: `hit@1/3/5`, `MRR@10`, per-stage latency (p50/p95), plus LLM-as-judge dimensions when keys are available.
+
+→ Full table: [`docs/eval-results.md`](docs/eval-results.md) — `make eval` to regenerate.
+
 ## Architecture
 
 ```
@@ -224,8 +230,8 @@ This project is being polished into a portfolio piece via a five-PR series. Full
 | PR | Status | What it ships |
 |---|---|---|
 | **PR-1: Provider abstraction** | ✅ Open ([#1](https://github.com/BenettNR/professional-workspace/pull/1)) | `EmbeddingProvider` / `LLMProvider` Protocols; pipeline depends on interfaces, not vendor SDKs. [Plan](docs/superpowers/plans/2026-05-19-pr1-provider-abstraction.md) |
-| **PR-2: Offline demo mode** | 🚧 In progress | Zero-API-key local mode: sentence-transformers embeddings + Claude replay fixtures. `make demo` runs in < 2 min on a fresh clone. [Plan](docs/superpowers/plans/2026-05-19-pr2-offline-demo-mode.md) |
-| **PR-3: Eval harness + results** | Planned | 25-question golden dataset, ablation table (dense-only / hybrid / hybrid+rerank), latency p50/p95 per stage, `make eval` reproducibility. |
+| **PR-2: Offline demo mode** | ✅ Open ([#2](https://github.com/BenettNR/professional-workspace/pull/2)) | Zero-API-key local mode: sentence-transformers embeddings + Claude replay fixtures. `make demo` runs in < 2 min on a fresh clone. [Plan](docs/superpowers/plans/2026-05-19-pr2-offline-demo-mode.md) |
+| **PR-3: Eval harness + results** | 🚧 In progress | 53-question golden dataset, ablation harness (dense-only / hybrid / hybrid+rerank), latency p50/p95 per stage, `make eval` reproducibility. Results: [`docs/eval-results.md`](docs/eval-results.md). [Plan](docs/superpowers/plans/2026-05-19-pr3-eval-harness.md) |
 | **PR-4: CI + quality gates** | Planned | GitHub Actions: ruff + mypy --strict + pytest (3.11 / 3.12 matrix) + docker build. Green badges in this README. |
 | **PR-5: README + ADRs + screenshots** | Planned | Three Michael-Nygard ADRs, demo GIF, screenshots, finished README hero. |
 

@@ -30,6 +30,8 @@ function Show-Help {
     Write-Host "  check             lint + typecheck + test"
     Write-Host "  seed              Seed index from data/raw/"
     Write-Host "  replay-fixtures   Record Claude responses (needs real keys)"
+    Write-Host "  eval              Run full ablation eval (3 configs)"
+    Write-Host "  eval-fast         Run eval without LLM-as-judge"
     Write-Host "  clean             Wipe persistent indexes"
     Write-Host "  clean-all         Wipe indexes + venv + caches"
     Write-Host ""
@@ -90,6 +92,14 @@ function Invoke-ReplayFixtures {
     uv run python scripts/build_replay_fixtures.py
 }
 
+function Invoke-Eval {
+    uv run python scripts/run_eval.py
+}
+
+function Invoke-EvalFast {
+    uv run python scripts/run_eval.py --no-llm-judge
+}
+
 function Invoke-Clean {
     if (Test-Path data/chroma) { Remove-Item -Recurse -Force data/chroma }
     if (Test-Path data/bm25_index.pkl) { Remove-Item -Force data/bm25_index.pkl }
@@ -117,6 +127,8 @@ switch ($Target.ToLower()) {
     'check'           { Invoke-Check }
     'seed'            { Invoke-Seed }
     'replay-fixtures' { Invoke-ReplayFixtures }
+    'eval'            { Invoke-Eval }
+    'eval-fast'       { Invoke-EvalFast }
     'clean'           { Invoke-Clean }
     'clean-all'       { Invoke-CleanAll }
     default {
