@@ -5,25 +5,31 @@ The model is lazy-loaded on first use (~80 MB download on first run).
 
 Optionally falls back to LLM-as-judge scoring when use_llm=True.
 """
+
 from __future__ import annotations
 
 import asyncio
 from functools import lru_cache
+from typing import TYPE_CHECKING
 
 import structlog
 
 from src.models import RetrievedChunk
 
+if TYPE_CHECKING:
+    from sentence_transformers import CrossEncoder
+
 log = structlog.get_logger(__name__)
 
 
 @lru_cache(maxsize=1)
-def _load_cross_encoder(model_name: str):
+def _load_cross_encoder(model_name: str) -> CrossEncoder:
     """Load the cross-encoder model once and cache it for the process lifetime."""
     from sentence_transformers import CrossEncoder
 
     log.info("loading_cross_encoder", model=model_name)
-    return CrossEncoder(model_name)
+    model: CrossEncoder = CrossEncoder(model_name)
+    return model
 
 
 class Reranker:
@@ -69,9 +75,11 @@ class Reranker:
     ) -> list[RetrievedChunk]:
         model = _load_cross_encoder(self._model_name)
         pairs = [(query, rc.chunk.content) for rc in candidates]
-        scores = model.predict(pairs)
+        # CrossEncoder.predict's input type is over-broad (covers image/audio
+        # variants too); a list of (str, str) tuples is the documented happy path.
+        scores = model.predict(pairs)  # type: ignore[arg-type]
 
-        for rc, score in zip(candidates, scores):
+        for rc, score in zip(candidates, scores, strict=True):
             rc.rerank_score = float(score)
         return candidates
 
@@ -98,8 +106,10 @@ class Reranker:
                     max_tokens=10,
                     messages=[{"role": "user", "content": prompt}],
                 )
-                score_text = response.content[0].text.strip()
-                rc.rerank_score = float(score_text)
+                block = response.content[0]
+                if not isinstance(block, anthropic.types.TextBlock):
+                    raise TypeError(f"Expected TextBlock, got {type(block).__name__}")
+                rc.rerank_score = float(block.text.strip())
             except Exception:
                 rc.rerank_score = rc.fusion_score  # fallback
             return rc

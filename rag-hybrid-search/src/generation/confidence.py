@@ -7,6 +7,7 @@ Three dimensions:
 
 Composite = 0.4 * retrieval + 0.4 * citation + 0.2 * completeness
 """
+
 from __future__ import annotations
 
 import math

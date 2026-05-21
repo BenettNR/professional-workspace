@@ -3,6 +3,7 @@
 Loads the handcrafted evaluation set from eval/golden_dataset.json and
 provides iteration helpers used by the evaluation runner.
 """
+
 from __future__ import annotations
 
 import json

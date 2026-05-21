@@ -9,6 +9,7 @@ Options:
   --clean       Drop and rebuild indexes from scratch
   --docs-dir    Override the docs directory path
 """
+
 from __future__ import annotations
 
 import argparse
@@ -49,6 +50,7 @@ async def main(strategy: str, clean: bool, docs_dir: Path) -> None:
         chroma_dir = Path(settings.chroma_persist_directory)
         if chroma_dir.exists():
             import shutil
+
             shutil.rmtree(chroma_dir)
             log.info("chroma_wiped", path=str(chroma_dir))
         if bm25_path.exists():

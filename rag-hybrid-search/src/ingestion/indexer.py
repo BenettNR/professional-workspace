@@ -3,6 +3,7 @@
 Flow for each document:
   load → chunk → embed → deduplicate → upsert ChromaDB → rebuild BM25
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -163,9 +164,13 @@ class DocumentIndexer:
 
         if unique_chunks:
             try:
+                # ChromaDB's strict typing on `embeddings` rejects plain
+                # `list[list[float]]` even though it works at runtime — the
+                # SDK accepts the same shape via numpy arrays. Ignore here
+                # rather than convert to numpy on every upsert.
                 self._collection.upsert(
                     ids=[c.id for c in unique_chunks],
-                    embeddings=unique_embeddings,
+                    embeddings=unique_embeddings,  # type: ignore[arg-type]
                     documents=[c.content for c in unique_chunks],
                     metadatas=[c.metadata.to_chroma_dict() for c in unique_chunks],
                 )
@@ -199,9 +204,7 @@ class DocumentIndexer:
         extensions = self._loader.supported_extensions()
         pattern = "**/*" if recursive else "*"
         files = [
-            p
-            for p in directory.glob(pattern)
-            if p.is_file() and p.suffix.lower() in extensions
+            p for p in directory.glob(pattern) if p.is_file() and p.suffix.lower() in extensions
         ]
         log.info("ingesting_directory", path=str(directory), files=len(files))
         results = []
@@ -219,7 +222,8 @@ class DocumentIndexer:
         metadatas = result.get("metadatas") or []
         seen: dict[str, dict[str, Any]] = {}
         for meta in metadatas:
-            fname = meta.get("filename", "unknown")
+            fname_raw = meta.get("filename", "unknown")
+            fname = str(fname_raw)
             if fname not in seen:
                 seen[fname] = {
                     "filename": fname,

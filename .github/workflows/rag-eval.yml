@@ -1,0 +1,59 @@
+name: rag-hybrid-search eval (manual)
+
+# Costs real money — runs on demand only.
+# Repository secrets required: VOYAGE_API_KEY, ANTHROPIC_API_KEY.
+
+on:
+  workflow_dispatch:
+    inputs:
+      config:
+        description: 'Which ablation config to run'
+        required: true
+        default: 'all'
+        type: choice
+        options: [dense-only, hybrid, hybrid+rerank, all]
+      no_llm_judge:
+        description: 'Skip LLM-as-judge calls (cheaper, retrieval metrics only)'
+        required: true
+        default: false
+        type: boolean
+
+defaults:
+  run:
+    working-directory: rag-hybrid-search
+
+jobs:
+  eval:
+    name: ablation eval
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VOYAGE_API_KEY: ${{ secrets.VOYAGE_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      EMBEDDING_BACKEND: voyage
+      LLM_BACKEND: anthropic
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: Install deps
+        run: uv pip install --system -e ".[dev]"
+      - name: Seed index
+        run: python scripts/seed.py
+      - name: Run eval
+        run: |
+          python scripts/run_eval.py \
+            --config ${{ inputs.config }} \
+            ${{ inputs.no_llm_judge && '--no-llm-judge' || '' }}
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results-${{ github.run_id }}
+          path: |
+            rag-hybrid-search/eval/results/
+            rag-hybrid-search/docs/eval-results.md
+          retention-days: 90

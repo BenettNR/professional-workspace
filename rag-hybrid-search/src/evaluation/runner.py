@@ -18,6 +18,7 @@ Why three configs:
 Comparing these proves the architecture isn't cargo-cult: each stage
 should be measurably justified by the deltas in the table.
 """
+
 from __future__ import annotations
 
 import statistics
@@ -116,15 +117,9 @@ class ConfigRunResult:
                 1,
             ),
             "latency_p50_embed_ms": round(self._latency_percentile("embed_ms", 0.5), 1),
-            "latency_p50_retrieve_ms": round(
-                self._latency_percentile("retrieve_ms", 0.5), 1
-            ),
-            "latency_p50_rerank_ms": round(
-                self._latency_percentile("rerank_ms", 0.5), 1
-            ),
-            "latency_p50_generate_ms": round(
-                self._latency_percentile("generate_ms", 0.5), 1
-            ),
+            "latency_p50_retrieve_ms": round(self._latency_percentile("retrieve_ms", 0.5), 1),
+            "latency_p50_rerank_ms": round(self._latency_percentile("rerank_ms", 0.5), 1),
+            "latency_p50_generate_ms": round(self._latency_percentile("generate_ms", 0.5), 1),
         }
 
     def _percentile_total(self, pct: float) -> float:
@@ -202,9 +197,7 @@ class AblationRunner:
         )
         return result
 
-    async def _run_one(
-        self, config_name: ConfigName, q: GoldenQuestion
-    ) -> PerQuestionRecord:
+    async def _run_one(self, config_name: ConfigName, q: GoldenQuestion) -> PerQuestionRecord:
         from src.retrieval.fusion import reciprocal_rank_fusion
 
         latency = StageLatencies()
@@ -219,9 +212,7 @@ class AblationRunner:
         if config_name == "dense-only":
             candidates = dense_results[: self._fusion_top_k]
         else:
-            sparse_results = await self._sparse.retrieve(
-                q.question, top_k=self._sparse_top_k
-            )
+            sparse_results = await self._sparse.retrieve(q.question, top_k=self._sparse_top_k)
             candidates = reciprocal_rank_fusion(
                 dense_results,
                 sparse_results,
@@ -234,9 +225,7 @@ class AblationRunner:
 
         if config_name == "hybrid+rerank":
             t0 = _timed_ms()
-            reranked = await self._reranker.rerank(
-                q.question, candidates, top_k=self._rerank_top_k
-            )
+            reranked = await self._reranker.rerank(q.question, candidates, top_k=self._rerank_top_k)
             latency.rerank_ms = _timed_ms() - t0
             final_chunks = reranked
         else:
@@ -253,9 +242,7 @@ class AblationRunner:
         if self._judge is not None:
             judge_result = await self._judge.evaluate_response(q, response)
 
-        retrieved_sources = [
-            rc.chunk.metadata.filename for rc in final_chunks
-        ]
+        retrieved_sources = [rc.chunk.metadata.filename for rc in final_chunks]
 
         return PerQuestionRecord(
             question_id=q.id,

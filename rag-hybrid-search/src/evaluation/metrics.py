@@ -13,6 +13,7 @@ The runner depends on `LLMProvider` (the Protocol introduced in PR-1) rather
 than the Anthropic SDK directly — so the same evaluator can run with replay
 fixtures or real Claude depending on backend configuration.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -166,9 +167,7 @@ class JudgeEvaluator:
             log.warning("judge_call_failed", error=str(exc))
             return 0.5
 
-    async def _score_correctness(
-        self, golden: GoldenQuestion, response: RAGResponse
-    ) -> float:
+    async def _score_correctness(self, golden: GoldenQuestion, response: RAGResponse) -> float:
         prompt = (
             f"Expected answer: {golden.expected_answer}\n\n"
             f"Actual answer: {response.answer}\n\n"
@@ -177,9 +176,7 @@ class JudgeEvaluator:
         return await self._judge(prompt)
 
     async def _score_faithfulness(self, response: RAGResponse) -> float:
-        context = "\n\n".join(
-            rc.chunk.content[:300] for rc in response.retrieved_chunks[:5]
-        )
+        context = "\n\n".join(rc.chunk.content[:300] for rc in response.retrieved_chunks[:5])
         prompt = (
             f"Context:\n{context}\n\n"
             f"Answer:\n{response.answer[:500]}\n\n"
@@ -190,9 +187,7 @@ class JudgeEvaluator:
     async def _score_retrieval_relevance(
         self, golden: GoldenQuestion, response: RAGResponse
     ) -> float:
-        retrieved_sources = [
-            rc.chunk.metadata.filename for rc in response.retrieved_chunks
-        ]
+        retrieved_sources = [rc.chunk.metadata.filename for rc in response.retrieved_chunks]
         prompt = (
             f"Question: {golden.question}\n"
             f"Expected sources: {golden.expected_sources}\n"

@@ -6,6 +6,7 @@ where k=60 is the standard smoothing constant and r ranges over result lists.
 The fused list is then passed to the cross-encoder reranker for a second-pass
 precision boost.
 """
+
 from __future__ import annotations
 
 import structlog

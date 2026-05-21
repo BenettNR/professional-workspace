@@ -7,9 +7,12 @@ Endpoints:
 
 OpenAPI docs available at /docs (Swagger) and /redoc.
 """
+
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from typing import Any
 
 import structlog
 from fastapi import FastAPI
@@ -22,7 +25,7 @@ log = structlog.get_logger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     log.info(
         "startup",
         host=settings.api_host,
@@ -61,5 +64,5 @@ app.include_router(ingest.router, prefix="/v1", tags=["Ingestion"])
 
 
 @app.get("/health", tags=["Health"])
-async def health() -> dict:
+async def health() -> dict[str, Any]:
     return {"status": "ok", "version": "0.1.0"}

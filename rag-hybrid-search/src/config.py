@@ -7,6 +7,7 @@ still set to the .env.example placeholder, the corresponding backend
 auto-switches to its offline variant (`local` for embeddings, `replay`
 for LLM). An explicit EMBEDDING_BACKEND / LLM_BACKEND env var always wins.
 """
+
 from __future__ import annotations
 
 import os
@@ -36,7 +37,9 @@ class Settings(BaseSettings):
     embedding_batch_size: int = 128  # Voyage AI per-request limit
 
     # ── Anthropic (generation + LLM-as-judge) ─────────────────────────────────
-    anthropic_api_key: str = Field(default="", description="Anthropic API key (empty → replay backend)")
+    anthropic_api_key: str = Field(
+        default="", description="Anthropic API key (empty → replay backend)"
+    )
     llm_model: str = "claude-sonnet-4-6"
     llm_max_tokens: int = 2048
 
@@ -56,9 +59,9 @@ class Settings(BaseSettings):
     # ── Retrieval ─────────────────────────────────────────────────────────────
     dense_top_k: int = 10
     sparse_top_k: int = 10
-    fusion_top_k: int = 20   # candidates sent to reranker
-    rerank_top_k: int = 5    # final chunks used for generation
-    rrf_k: int = 60          # RRF smoothing constant (standard default)
+    fusion_top_k: int = 20  # candidates sent to reranker
+    rerank_top_k: int = 5  # final chunks used for generation
+    rrf_k: int = 60  # RRF smoothing constant (standard default)
     dense_weight: float = 0.7
     sparse_weight: float = 0.3
     dedup_similarity_threshold: float = 0.95

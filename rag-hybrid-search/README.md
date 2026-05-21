@@ -1,5 +1,11 @@
 # RAG Hybrid Search
 
+[![CI](https://github.com/BenettNR/professional-workspace/actions/workflows/rag-ci.yml/badge.svg?branch=main)](https://github.com/BenettNR/professional-workspace/actions/workflows/rag-ci.yml)
+[![Python 3.11 | 3.12](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![mypy --strict](https://img.shields.io/badge/mypy-strict-blue)](pyproject.toml)
+
 > Production-grade Retrieval-Augmented Generation with hybrid dense + sparse retrieval, citation verification, and multi-dimensional confidence scoring.
 
 A question-answering service over your own documents that returns **grounded answers with verified citations** and **explicit confidence scores** — not just plausible-sounding prose. Built to demonstrate the engineering decisions that separate a working RAG demo from a production-ready RAG service.
@@ -213,13 +219,32 @@ Twelve-factor: every tunable comes from the environment, every default is a type
 ## Development
 
 ```bash
-uv run pytest -q              # run tests with coverage
-uv run ruff check .           # lint
-uv run ruff format .          # format
-uv run mypy --strict src/     # type-check (strict mode is enabled)
+make test       # pytest with coverage
+make lint       # ruff check + format check
+make typecheck  # mypy --strict
+make check      # all three above
 ```
 
-`pyproject.toml` configures all of these — coverage threshold, ruff rules (`E F I N UP B SIM`), and `mypy --strict` are pinned in one place.
+`pyproject.toml` configures everything — ruff rules (`E F I N UP B SIM`), `mypy --strict`, pytest, coverage — in one place.
+
+### Pre-commit hooks (optional, recommended)
+
+```bash
+uv pip install pre-commit
+pre-commit install
+```
+
+Hooks match CI's gates exactly: ruff lint + format, mypy strict on `src/`, basic file hygiene. Failures show up locally instead of in CI.
+
+### CI gates
+
+GitHub Actions runs on every push/PR touching this project:
+- `lint` — `ruff check` + `ruff format --check`
+- `typecheck` — `mypy --strict src/`
+- `test` — `pytest` on Python 3.11 and 3.12, coverage gated
+- `docker-build` — `docker compose build` + `/health` smoke test
+
+The full eval (with real Claude calls) lives in a separate `workflow_dispatch`-only workflow so it never runs automatically (and never bills the repo owner).
 
 ---
 
@@ -231,8 +256,8 @@ This project is being polished into a portfolio piece via a five-PR series. Full
 |---|---|---|
 | **PR-1: Provider abstraction** | ✅ Open ([#1](https://github.com/BenettNR/professional-workspace/pull/1)) | `EmbeddingProvider` / `LLMProvider` Protocols; pipeline depends on interfaces, not vendor SDKs. [Plan](docs/superpowers/plans/2026-05-19-pr1-provider-abstraction.md) |
 | **PR-2: Offline demo mode** | ✅ Open ([#2](https://github.com/BenettNR/professional-workspace/pull/2)) | Zero-API-key local mode: sentence-transformers embeddings + Claude replay fixtures. `make demo` runs in < 2 min on a fresh clone. [Plan](docs/superpowers/plans/2026-05-19-pr2-offline-demo-mode.md) |
-| **PR-3: Eval harness + results** | 🚧 In progress | 53-question golden dataset, ablation harness (dense-only / hybrid / hybrid+rerank), latency p50/p95 per stage, `make eval` reproducibility. Results: [`docs/eval-results.md`](docs/eval-results.md). [Plan](docs/superpowers/plans/2026-05-19-pr3-eval-harness.md) |
-| **PR-4: CI + quality gates** | Planned | GitHub Actions: ruff + mypy --strict + pytest (3.11 / 3.12 matrix) + docker build. Green badges in this README. |
+| **PR-3: Eval harness + results** | ✅ Open ([#3](https://github.com/BenettNR/professional-workspace/pull/3)) | 53-question golden dataset, ablation harness (dense-only / hybrid / hybrid+rerank), latency p50/p95 per stage, `make eval` reproducibility. Results: [`docs/eval-results.md`](docs/eval-results.md). [Plan](docs/superpowers/plans/2026-05-19-pr3-eval-harness.md) |
+| **PR-4: CI + quality gates** | 🚧 In progress | GitHub Actions: ruff + mypy --strict + pytest (3.11 / 3.12 matrix) + docker build. Green badges above. |
 | **PR-5: README + ADRs + screenshots** | Planned | Three Michael-Nygard ADRs, demo GIF, screenshots, finished README hero. |
 
 ---

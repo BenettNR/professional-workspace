@@ -3,11 +3,12 @@
 All chunkers expose an async `chunk()` method for interface uniformity.
 Fixed and Recursive are synchronous internally; Semantic awaits embeddings.
 """
+
 from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -23,7 +24,7 @@ class TextChunker(ABC):
     def strategy(self) -> ChunkStrategy: ...
 
     @abstractmethod
-    async def chunk(self, text: str, **kwargs) -> list[str]: ...
+    async def chunk(self, text: str, **kwargs: Any) -> list[str]: ...
 
 
 class FixedSizeChunker(TextChunker):
@@ -38,7 +39,7 @@ class FixedSizeChunker(TextChunker):
         text: str,
         chunk_size: int = 512,
         chunk_overlap: int = 50,
-        **kwargs,
+        **kwargs: Any,
     ) -> list[str]:
         from langchain_text_splitters import CharacterTextSplitter
 
@@ -62,7 +63,7 @@ class RecursiveChunker(TextChunker):
         text: str,
         chunk_size: int = 512,
         chunk_overlap: int = 50,
-        **kwargs,
+        **kwargs: Any,
     ) -> list[str]:
         from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -92,7 +93,7 @@ class SemanticChunker(TextChunker):
         self,
         text: str,
         breakpoint_threshold: float = 0.3,
-        **kwargs,
+        **kwargs: Any,
     ) -> list[str]:
         sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
         if len(sentences) <= 2:
@@ -129,9 +130,7 @@ class SemanticChunker(TextChunker):
         return chunks or [text]
 
 
-def get_chunker(
-    strategy: ChunkStrategy, embedder: EmbeddingProvider | None = None
-) -> TextChunker:
+def get_chunker(strategy: ChunkStrategy, embedder: EmbeddingProvider | None = None) -> TextChunker:
     """Factory: return the appropriate chunker for the given strategy."""
     if strategy == ChunkStrategy.FIXED:
         return FixedSizeChunker()

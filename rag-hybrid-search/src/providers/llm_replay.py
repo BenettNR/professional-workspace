@@ -14,6 +14,7 @@ prompt shapes.
 The fixture file is reloaded if its mtime changes — so running
 `make replay-fixtures` updates the live offline mode without restarting.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -69,9 +70,7 @@ class ReplayLLMProvider:
         try:
             data = json.loads(self._path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
-            raise ProviderError(
-                f"Failed to load replay fixtures from {self._path}: {exc}"
-            ) from exc
+            raise ProviderError(f"Failed to load replay fixtures from {self._path}: {exc}") from exc
 
         self._calls = data.get("calls", {})
         self._mtime = self._path.stat().st_mtime
@@ -83,12 +82,8 @@ class ReplayLLMProvider:
 
         if self._questions_path and self._questions_path.exists():
             try:
-                qdata: dict[str, Any] = json.loads(
-                    self._questions_path.read_text(encoding="utf-8")
-                )
-                self._available_questions = [
-                    q["question"] for q in qdata.get("questions", [])
-                ]
+                qdata: dict[str, Any] = json.loads(self._questions_path.read_text(encoding="utf-8"))
+                self._available_questions = [q["question"] for q in qdata.get("questions", [])]
             except (OSError, json.JSONDecodeError) as exc:
                 log.warning("failed_to_load_demo_questions", error=str(exc))
 

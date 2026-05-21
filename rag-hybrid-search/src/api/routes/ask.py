@@ -1,4 +1,5 @@
 """POST /v1/ask — full RAG pipeline: embed → retrieve → generate."""
+
 from __future__ import annotations
 
 from typing import Annotated

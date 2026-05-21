@@ -8,6 +8,7 @@ For each citation [N] in the generated answer, we:
 This catches the most common RAG failure mode: confident answers with
 citations that don't actually support the stated claim.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -67,10 +68,7 @@ class CitationVerifier:
             return []
 
         chunk_map = {i + 1: rc for i, rc in enumerate(retrieved_chunks)}
-        tasks = [
-            self._verify_one(answer, num, chunk_map.get(num))
-            for num in citation_numbers
-        ]
+        tasks = [self._verify_one(answer, num, chunk_map.get(num)) for num in citation_numbers]
         citations = await asyncio.gather(*tasks)
         verified_count = sum(1 for c in citations if c.verified)
         log.info(

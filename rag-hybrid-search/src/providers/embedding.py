@@ -3,6 +3,7 @@
 The Protocol uses structural typing so consumers depend on shape, not on a
 particular base class. `@runtime_checkable` allows isinstance() in tests.
 """
+
 from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
@@ -53,8 +54,7 @@ class VoyageEmbeddingProvider:
     def __init__(self, api_key: str, model: str, batch_size: int = 128) -> None:
         if model not in _VOYAGE_DIMS:
             raise ProviderError(
-                f"Unknown Voyage model '{model}'. "
-                f"Known models: {sorted(_VOYAGE_DIMS)}"
+                f"Unknown Voyage model '{model}'. Known models: {sorted(_VOYAGE_DIMS)}"
             )
         self._client = voyageai.AsyncClient(api_key=api_key)  # type: ignore[attr-defined]
         self._model = model
@@ -69,9 +69,7 @@ class VoyageEmbeddingProvider:
     )
     async def _embed(self, texts: list[str], input_type: str) -> list[list[float]]:
         try:
-            result = await self._client.embed(
-                texts, model=self._model, input_type=input_type
-            )
+            result = await self._client.embed(texts, model=self._model, input_type=input_type)
         except Exception as exc:
             raise ProviderError(f"Voyage embedding call failed: {exc}") from exc
         # Voyage's SDK return type is loosely typed; floats are what voyage-3 returns.

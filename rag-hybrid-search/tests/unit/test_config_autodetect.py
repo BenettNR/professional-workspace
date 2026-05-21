@@ -1,4 +1,5 @@
 """Tests for config auto-detection of offline backends when API keys are missing."""
+
 from __future__ import annotations
 
 import importlib

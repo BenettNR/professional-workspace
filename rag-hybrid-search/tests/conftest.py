@@ -1,8 +1,8 @@
 """Shared test fixtures."""
+
 from __future__ import annotations
 
 import pytest
-from pathlib import Path
 
 from src.models import ChunkStrategy, DocumentChunk, DocumentMetadata, RetrievedChunk
 

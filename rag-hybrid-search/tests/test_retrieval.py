@@ -1,7 +1,6 @@
 """Tests for the retrieval module (fusion, deduplication)."""
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 from src.models import ChunkStrategy, DocumentChunk, DocumentMetadata, RetrievedChunk
 from src.retrieval.fusion import reciprocal_rank_fusion

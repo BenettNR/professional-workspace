@@ -5,6 +5,7 @@ common denominator across vendors. Streaming, tool use, and structured
 output are deliberately out of scope for this Protocol — when we need them,
 they will be additive (extending the interface, not breaking it).
 """
+
 from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
@@ -53,7 +54,5 @@ class AnthropicLLMProvider:
 
         block = response.content[0]
         if not isinstance(block, anthropic.types.TextBlock):
-            raise ProviderError(
-                f"Expected a TextBlock from Anthropic, got {type(block).__name__}"
-            )
+            raise ProviderError(f"Expected a TextBlock from Anthropic, got {type(block).__name__}")
         return block.text
