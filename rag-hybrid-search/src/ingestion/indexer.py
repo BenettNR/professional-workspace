@@ -8,16 +8,20 @@ from __future__ import annotations
 import hashlib
 import pickle
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 import structlog
 from rank_bm25 import BM25Okapi
 
 from src.exceptions import IndexingError
-from src.models import ChunkStrategy, DocumentChunk, DocumentMetadata, IngestedDocument
 from src.ingestion.chunkers import get_chunker
 from src.ingestion.deduplication import DuplicateDetector
-from src.ingestion.embedder import Embedder
 from src.ingestion.loaders import DocumentLoaderRegistry
+from src.models import ChunkStrategy, DocumentChunk, DocumentMetadata, IngestedDocument
+from src.providers.embedding import EmbeddingProvider
+
+if TYPE_CHECKING:
+    import chromadb
 
 log = structlog.get_logger(__name__)
 
@@ -72,8 +76,8 @@ class DocumentIndexer:
 
     def __init__(
         self,
-        embedder: Embedder,
-        collection,            # chromadb.Collection
+        embedder: EmbeddingProvider,
+        collection: "chromadb.Collection",
         bm25_index_path: Path,
         dedup_threshold: float = 0.95,
         chunk_size: int = 512,
@@ -150,7 +154,7 @@ class DocumentIndexer:
             for i, text in enumerate(raw_chunks)
         ]
 
-        embeddings = await self._embedder.embed_texts([c.content for c in chunks])
+        embeddings = await self._embedder.embed_documents([c.content for c in chunks])
 
         unique_chunks, unique_embeddings = await self._deduplicator.filter_duplicates(
             chunks, embeddings
@@ -206,14 +210,14 @@ class DocumentIndexer:
             results.append(result)
         return results
 
-    def list_indexed_documents(self) -> list[dict]:
+    def list_indexed_documents(self) -> list[dict[str, Any]]:
         """Return unique documents currently in the ChromaDB collection."""
         count = self._collection.count()
         if count == 0:
             return []
         result = self._collection.get(include=["metadatas"])
         metadatas = result.get("metadatas") or []
-        seen: dict[str, dict] = {}
+        seen: dict[str, dict[str, Any]] = {}
         for meta in metadatas:
             fname = meta.get("filename", "unknown")
             if fname not in seen:

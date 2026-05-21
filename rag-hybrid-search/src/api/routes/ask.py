@@ -1,23 +1,29 @@
 """POST /v1/ask — full RAG pipeline: embed → retrieve → generate."""
 from __future__ import annotations
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException
 
-from src.api.models import AskRequest, AskResponse, ChunkOut, CitationOut, ConfidenceOut
 from src.api.dependencies import get_embedder, get_generator, get_hybrid_retriever
+from src.api.models import AskRequest, AskResponse, ChunkOut, CitationOut, ConfidenceOut
 from src.generation.generator import RAGGenerator
-from src.ingestion.embedder import Embedder
+from src.providers.embedding import EmbeddingProvider
 from src.retrieval.fusion import HybridRetriever
 
 router = APIRouter()
+
+EmbedderDep = Annotated[EmbeddingProvider, Depends(get_embedder)]
+RetrieverDep = Annotated[HybridRetriever, Depends(get_hybrid_retriever)]
+GeneratorDep = Annotated[RAGGenerator, Depends(get_generator)]
 
 
 @router.post("/ask", response_model=AskResponse)
 async def ask(
     request: AskRequest,
-    embedder: Embedder = Depends(get_embedder),
-    retriever: HybridRetriever = Depends(get_hybrid_retriever),
-    generator: RAGGenerator = Depends(get_generator),
+    embedder: EmbedderDep,
+    retriever: RetrieverDep,
+    generator: GeneratorDep,
 ) -> AskResponse:
     try:
         query_embedding = await embedder.embed_query(request.question)

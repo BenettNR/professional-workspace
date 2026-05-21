@@ -29,8 +29,9 @@ log = structlog.get_logger()
 
 async def main(strategy: str, clean: bool, docs_dir: Path) -> None:
     import chromadb
-    from src.ingestion.embedder import Embedder
+
     from src.ingestion.indexer import DocumentIndexer
+    from src.providers.embedding import VoyageEmbeddingProvider
 
     structlog.configure(
         processors=[
@@ -60,8 +61,8 @@ async def main(strategy: str, clean: bool, docs_dir: Path) -> None:
         metadata={"hnsw:space": "l2"},
     )
 
-    embedder = Embedder(
-        api_key=settings.openai_api_key,
+    embedder = VoyageEmbeddingProvider(
+        api_key=settings.voyage_api_key,
         model=settings.embedding_model,
         batch_size=settings.embedding_batch_size,
     )
@@ -93,8 +94,8 @@ async def main(strategy: str, clean: bool, docs_dir: Path) -> None:
     print(f"  Strategy: {strategy}")
     print(f"  Duplicates skipped: {total_skipped}")
     print(f"  Collection size: {collection.count()}")
-    print(f"\nStart the API:      uvicorn src.api.main:app --reload")
-    print(f"Start the frontend: streamlit run frontend/app.py")
+    print("\nStart the API:      uvicorn src.api.main:app --reload")
+    print("Start the frontend: streamlit run frontend/app.py")
 
 
 if __name__ == "__main__":

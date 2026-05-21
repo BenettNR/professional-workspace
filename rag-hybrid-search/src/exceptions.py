@@ -36,3 +36,7 @@ class CitationVerificationError(RAGError):
 
 class EvaluationError(RAGError):
     """Raised when the evaluation pipeline encounters an unrecoverable error."""
+
+
+class ProviderError(RAGError):
+    """Raised when a provider (embedding or LLM) is misconfigured or unreachable."""

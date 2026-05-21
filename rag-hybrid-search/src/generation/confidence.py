@@ -9,10 +9,13 @@ Composite = 0.4 * retrieval + 0.4 * citation + 0.2 * completeness
 """
 from __future__ import annotations
 
-import anthropic
+import math
+
 import structlog
 
+from src.exceptions import ProviderError
 from src.models import Citation, ConfidenceScore, RetrievedChunk
+from src.providers.llm import LLMProvider
 
 log = structlog.get_logger(__name__)
 
@@ -33,9 +36,6 @@ def _retrieval_confidence(chunks: list[RetrievedChunk]) -> float:
     scores = []
     for rc in chunks:
         if rc.rerank_score is not None:
-            # Normalise cross-encoder score to [0,1] via sigmoid approximation
-            import math
-
             scores.append(1.0 / (1.0 + math.exp(-rc.rerank_score)))
         elif rc.fusion_score > 0:
             scores.append(min(1.0, rc.fusion_score * 10))
@@ -46,15 +46,14 @@ def _retrieval_confidence(chunks: list[RetrievedChunk]) -> float:
 
 def _citation_coverage(citations: list[Citation]) -> float:
     if not citations:
-        return 1.0  # no citations made → no false citations; give benefit of the doubt
+        return 1.0
     verified = sum(1 for c in citations if c.verified)
     return verified / len(citations)
 
 
 class ConfidenceScorer:
-    def __init__(self, api_key: str, model: str) -> None:
-        self._client = anthropic.AsyncAnthropic(api_key=api_key)
-        self._model = model
+    def __init__(self, llm: LLMProvider) -> None:
+        self._llm = llm
 
     async def score(
         self,
@@ -85,18 +84,12 @@ class ConfidenceScorer:
 
     async def _score_completeness(self, question: str, answer: str) -> float:
         try:
-            response = await self._client.messages.create(
-                model=self._model,
-                max_tokens=10,
+            text = await self._llm.complete(
                 system=_COMPLETENESS_SYSTEM,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": f"QUESTION:\n{question}\n\nANSWER:\n{answer[:1000]}",
-                    }
-                ],
+                user=f"QUESTION:\n{question}\n\nANSWER:\n{answer[:1000]}",
+                max_tokens=10,
             )
-            return float(response.content[0].text.strip())
-        except Exception as exc:
+            return float(text.strip())
+        except (ProviderError, ValueError) as exc:
             log.warning("completeness_scoring_failed", error=str(exc))
-            return 0.5  # conservative fallback
+            return 0.5
