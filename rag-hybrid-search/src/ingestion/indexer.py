@@ -40,16 +40,19 @@ class BM25State:
         self,
         tokenized_corpus: list[list[str]],
         chunk_ids: list[str],
-        bm25: BM25Okapi,
+        bm25: BM25Okapi | None,
     ) -> None:
         self.tokenized_corpus = tokenized_corpus
         self.chunk_ids = chunk_ids
+        # `bm25` is None for an empty corpus. BM25Okapi divides by the corpus
+        # size during IDF calc, so it cannot be built with zero documents.
+        # The scorer is rebuilt from the pickled corpus in SparseRetriever at
+        # query time, so this in-memory object is not read after indexing.
         self.bm25 = bm25
 
     @classmethod
     def empty(cls) -> BM25State:
-        bm25 = BM25Okapi([[]])
-        return cls([], [], bm25)
+        return cls([], [], None)
 
     def save(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -68,7 +71,7 @@ class BM25State:
             data = pickle.load(f)
         corpus = data["tokenized_corpus"]
         ids = data["chunk_ids"]
-        bm25 = BM25Okapi(corpus) if corpus else BM25Okapi([[]])
+        bm25 = BM25Okapi(corpus) if corpus else None
         return cls(corpus, ids, bm25)
 
 

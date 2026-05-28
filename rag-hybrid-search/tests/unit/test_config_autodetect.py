@@ -9,8 +9,15 @@ import pytest
 
 
 @pytest.fixture
-def clean_env(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
-    """Strip any provider/backend env vars and force a fresh Settings import."""
+def clean_env(monkeypatch: pytest.MonkeyPatch, tmp_path) -> Iterator[None]:
+    """Strip provider/backend env vars and isolate from any real .env file.
+
+    pydantic-settings reads `.env` relative to the working directory, so a
+    developer who has filled in their real keys locally would otherwise break
+    these "missing key" tests. chdir to an empty tmp dir guarantees no `.env`
+    is found and the assertions reflect env vars only — matching CI, where no
+    `.env` exists.
+    """
     for var in (
         "VOYAGE_API_KEY",
         "ANTHROPIC_API_KEY",
@@ -18,6 +25,7 @@ def clean_env(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
         "LLM_BACKEND",
     ):
         monkeypatch.delenv(var, raising=False)
+    monkeypatch.chdir(tmp_path)
     # Force re-import so model_validator runs against the cleaned env
     import src.config
 

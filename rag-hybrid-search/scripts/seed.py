@@ -29,10 +29,15 @@ log = structlog.get_logger()
 
 
 async def main(strategy: str, clean: bool, docs_dir: Path) -> None:
-    import chromadb
-
-    from src.ingestion.indexer import DocumentIndexer
-    from src.providers.embedding import VoyageEmbeddingProvider
+    # Use the same DI container the API uses, so the collection name
+    # (per-embedder, e.g. rag_docs_voyage_voyage-3_1024) is identical to what
+    # the API and the replay recorder read from. A single source of truth
+    # avoids the "seeded one collection, queried another" class of bug.
+    from src.api.dependencies import (
+        get_chroma_collection,
+        get_embedding_provider,
+        get_indexer,
+    )
 
     structlog.configure(
         processors=[
@@ -56,28 +61,16 @@ async def main(strategy: str, clean: bool, docs_dir: Path) -> None:
         if bm25_path.exists():
             bm25_path.unlink()
             log.info("bm25_wiped", path=str(bm25_path))
+        # lru_cache singletons may hold a handle to the now-deleted collection
+        get_chroma_collection.cache_clear()
+        get_embedding_provider.cache_clear()
+        get_indexer.cache_clear()
 
-    client = chromadb.PersistentClient(path=settings.chroma_persist_directory)
-    collection = client.get_or_create_collection(
-        name=settings.chroma_collection_name,
-        metadata={"hnsw:space": "l2"},
-    )
+    embedder = get_embedding_provider()
+    collection = get_chroma_collection()
+    log.info("seed_target", collection=collection.name, embedder=embedder.name)
 
-    embedder = VoyageEmbeddingProvider(
-        api_key=settings.voyage_api_key,
-        model=settings.embedding_model,
-        batch_size=settings.embedding_batch_size,
-    )
-
-    indexer = DocumentIndexer(
-        embedder=embedder,
-        collection=collection,
-        bm25_index_path=bm25_path,
-        dedup_threshold=settings.dedup_similarity_threshold,
-        chunk_size=settings.chunk_size,
-        chunk_overlap=settings.chunk_overlap,
-        semantic_breakpoint_threshold=settings.semantic_breakpoint_threshold,
-    )
+    indexer = get_indexer()
 
     chunk_strategy = ChunkStrategy(strategy)
     results = await indexer.ingest_directory(docs_dir, strategy=chunk_strategy, recursive=True)
@@ -92,7 +85,7 @@ async def main(strategy: str, clean: bool, docs_dir: Path) -> None:
         total_duplicates_skipped=total_skipped,
         collection_size=collection.count(),
     )
-    print(f"\n✓ Indexed {len(results)} documents → {total_chunks} chunks in ChromaDB")
+    print(f"\n[OK] Indexed {len(results)} documents -> {total_chunks} chunks in ChromaDB")
     print(f"  Strategy: {strategy}")
     print(f"  Duplicates skipped: {total_skipped}")
     print(f"  Collection size: {collection.count()}")

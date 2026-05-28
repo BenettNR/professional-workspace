@@ -25,7 +25,6 @@ import argparse
 import asyncio
 import hashlib
 import json
-import os
 import sys
 import time
 from datetime import UTC, datetime
@@ -199,11 +198,16 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if not os.environ.get("VOYAGE_API_KEY") or not os.environ.get("ANTHROPIC_API_KEY"):
+    # Read keys from settings (which loads .env via pydantic-settings), not
+    # straight from os.environ — otherwise a key in .env but not exported to
+    # the shell would look "missing".
+    from src.config import _is_placeholder, settings
+
+    if _is_placeholder(settings.voyage_api_key) or _is_placeholder(settings.anthropic_api_key):
         raise SystemExit(
-            "[err] VOYAGE_API_KEY and ANTHROPIC_API_KEY must be set in the "
-            "environment. This script records real Claude responses and "
-            "cannot run in offline mode."
+            "[err] VOYAGE_API_KEY and ANTHROPIC_API_KEY must be set (in .env or "
+            "the environment) with real values. This script records real Claude "
+            "responses and cannot run in offline mode."
         )
 
     asyncio.run(_record(args.questions, args.output, _read_git_commit()))
