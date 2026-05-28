@@ -1,0 +1,1773 @@
+{
+  "config_name": "dense-only",
+  "aggregate": {
+    "hit@1": 0.811,
+    "hit@3": 0.849,
+    "hit@5": 0.887,
+    "mrr@10": 0.839,
+    "hit@1_by_category": {
+      "simple_lookup": 0.897,
+      "multi_hop": 1.0,
+      "unanswerable": 0.222,
+      "ambiguous": 1.0
+    },
+    "latency_p50_total_ms": 8731.1,
+    "latency_p95_total_ms": 11985.4,
+    "latency_p50_embed_ms": 292.5,
+    "latency_p50_retrieve_ms": 3.4,
+    "latency_p50_rerank_ms": 0.0,
+    "latency_p50_generate_ms": 8343.7
+  },
+  "per_question": [
+    {
+      "id": "q001",
+      "question": "What is the rate limit for Standard tier requests per minute?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 363.3,
+        "retrieve": 52.5,
+        "rerank": 0.0,
+        "generate": 5114.3,
+        "total": 5530.2
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "overview.md",
+        "rate-limiting.md"
+      ],
+      "expected_sources": [
+        "rate-limiting.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.7,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 0.5,
+        "composite": 0.8099999999999999
+      }
+    },
+    {
+      "id": "q002",
+      "question": "What error code is returned when a stream already exists?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 263.4,
+        "retrieve": 4.2,
+        "rerank": 0.0,
+        "generate": 8178.2,
+        "total": 8445.9
+      },
+      "retrieved_sources": [
+        "error-codes.md",
+        "error-codes.md",
+        "api-reference.md",
+        "error-codes.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "error-codes.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 0.8499999999999999
+      }
+    },
+    {
+      "id": "q003",
+      "question": "How do I authenticate API requests in v2?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 323.8,
+        "retrieve": 33.2,
+        "rerank": 0.0,
+        "generate": 10185.6,
+        "total": 10542.6
+      },
+      "retrieved_sources": [
+        "authentication.md",
+        "migration.md",
+        "authentication.md",
+        "migration.md",
+        "authentication.md"
+      ],
+      "expected_sources": [
+        "authentication.md"
+      ],
+      "judge": {
+        "correctness": 0.9,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 0.7,
+        "citation_accuracy": 1.0,
+        "composite": 0.9100000000000001
+      }
+    },
+    {
+      "id": "q004",
+      "question": "What is the maximum number of events in a batch publish operation?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 316.3,
+        "retrieve": 3.2,
+        "rerank": 0.0,
+        "generate": 5681.0,
+        "total": 6000.6
+      },
+      "retrieved_sources": [
+        "api-reference.md",
+        "troubleshooting.md",
+        "troubleshooting.md",
+        "rate-limiting.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "api-reference.md",
+        "error-codes.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.8999999999999999
+      }
+    },
+    {
+      "id": "q005",
+      "question": "What format do event IDs use in API v2?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 412.6,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 8226.1,
+        "total": 8641.9
+      },
+      "retrieved_sources": [
+        "migration.md",
+        "data-formats.md",
+        "api-reference.md",
+        "data-formats.md",
+        "overview.md"
+      ],
+      "expected_sources": [
+        "data-formats.md",
+        "migration.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.0,
+        "composite": 0.5499999999999999
+      }
+    },
+    {
+      "id": "q006",
+      "question": "What is the maximum event payload size?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 292.5,
+        "retrieve": 4.1,
+        "rerank": 0.0,
+        "generate": 8434.5,
+        "total": 8731.1
+      },
+      "retrieved_sources": [
+        "troubleshooting.md",
+        "data-formats.md",
+        "error-codes.md",
+        "rate-limiting.md",
+        "data-formats.md"
+      ],
+      "expected_sources": [
+        "error-codes.md",
+        "troubleshooting.md"
+      ],
+      "judge": {
+        "correctness": 0.8,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.8400000000000001
+      }
+    },
+    {
+      "id": "q007",
+      "question": "How long are cursor tokens valid after being issued?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 323.7,
+        "retrieve": 3.6,
+        "rerank": 0.0,
+        "generate": 4619.5,
+        "total": 4946.7
+      },
+      "retrieved_sources": [
+        "data-formats.md",
+        "rate-limiting.md",
+        "migration.md",
+        "data-formats.md",
+        "migration.md"
+      ],
+      "expected_sources": [
+        "data-formats.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.0,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.6000000000000001
+      }
+    },
+    {
+      "id": "q008",
+      "question": "What is the Developer tier daily event limit?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 255.7,
+        "retrieve": 6.4,
+        "rerank": 0.0,
+        "generate": 6965.1,
+        "total": 7227.1
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "overview.md",
+        "rate-limiting.md",
+        "webhooks.md",
+        "rate-limiting.md"
+      ],
+      "expected_sources": [
+        "overview.md",
+        "rate-limiting.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 1.0
+      }
+    },
+    {
+      "id": "q009",
+      "question": "What environment variable overrides the API base URL?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 279.9,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 5790.9,
+        "total": 6074.1
+      },
+      "retrieved_sources": [
+        "configuration.md",
+        "configuration.md",
+        "configuration.md",
+        "troubleshooting.md",
+        "installation.md"
+      ],
+      "expected_sources": [
+        "configuration.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 1.0
+      }
+    },
+    {
+      "id": "q010",
+      "question": "What HTTP status code does NXE-5001 return?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 271.3,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 5163.6,
+        "total": 5438.2
+      },
+      "retrieved_sources": [
+        "error-codes.md",
+        "error-codes.md",
+        "error-codes.md",
+        "error-codes.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "error-codes.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 1.0
+      }
+    },
+    {
+      "id": "q011",
+      "question": "What is the stream name pattern/regex required by Nexus?",
+      "category": "simple_lookup",
+      "hit@1": 0.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 0.5,
+      "latency_ms": {
+        "embed": 278.7,
+        "retrieve": 3.1,
+        "rerank": 0.0,
+        "generate": 8618.1,
+        "total": 8900.0
+      },
+      "retrieved_sources": [
+        "overview.md",
+        "troubleshooting.md",
+        "migration.md",
+        "configuration.md",
+        "api-reference.md"
+      ],
+      "expected_sources": [
+        "api-reference.md",
+        "error-codes.md",
+        "troubleshooting.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.75
+      }
+    },
+    {
+      "id": "q012",
+      "question": "What compression algorithms does Nexus support?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 296.6,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 6509.5,
+        "total": 6809.4
+      },
+      "retrieved_sources": [
+        "data-formats.md",
+        "overview.md",
+        "configuration.md",
+        "data-formats.md",
+        "installation.md"
+      ],
+      "expected_sources": [
+        "data-formats.md",
+        "configuration.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.0,
+        "composite": 0.5499999999999999
+      }
+    },
+    {
+      "id": "q013",
+      "question": "How many retry attempts does Nexus make for failed webhook deliveries?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 358.5,
+        "retrieve": 2.9,
+        "rerank": 0.0,
+        "generate": 6263.5,
+        "total": 6624.9
+      },
+      "retrieved_sources": [
+        "webhooks.md",
+        "webhooks.md",
+        "authentication.md",
+        "webhooks.md",
+        "configuration.md"
+      ],
+      "expected_sources": [
+        "webhooks.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 0.8499999999999999
+      }
+    },
+    {
+      "id": "q014",
+      "question": "What is the default request timeout for the Nexus SDK?",
+      "category": "simple_lookup",
+      "hit@1": 0.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 0.5,
+      "latency_ms": {
+        "embed": 272.9,
+        "retrieve": 3.5,
+        "rerank": 0.0,
+        "generate": 8738.3,
+        "total": 9014.7
+      },
+      "retrieved_sources": [
+        "troubleshooting.md",
+        "configuration.md",
+        "configuration.md",
+        "configuration.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "configuration.md"
+      ],
+      "judge": {
+        "correctness": 0.95,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.6666666666666666,
+        "composite": 0.6683333333333332
+      }
+    },
+    {
+      "id": "q015",
+      "question": "What scope is required to publish events to a stream?",
+      "category": "simple_lookup",
+      "hit@1": 0.0,
+      "hit@3": 0.0,
+      "hit@5": 1.0,
+      "mrr@10": 0.25,
+      "latency_ms": {
+        "embed": 274.1,
+        "retrieve": 9.2,
+        "rerank": 0.0,
+        "generate": 6564.5,
+        "total": 6847.8
+      },
+      "retrieved_sources": [
+        "api-reference.md",
+        "api-reference.md",
+        "installation.md",
+        "authentication.md",
+        "troubleshooting.md"
+      ],
+      "expected_sources": [
+        "authentication.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.9,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.8700000000000001
+      }
+    },
+    {
+      "id": "q016",
+      "question": "What NEXUS_ environment variable controls the consumer group name?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 292.0,
+        "retrieve": 3.8,
+        "rerank": 0.0,
+        "generate": 7736.1,
+        "total": 8031.8
+      },
+      "retrieved_sources": [
+        "configuration.md",
+        "configuration.md",
+        "configuration.md",
+        "installation.md",
+        "configuration.md"
+      ],
+      "expected_sources": [
+        "configuration.md"
+      ],
+      "judge": {
+        "correctness": 0.95,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 0.0,
+        "composite": 0.635
+      }
+    },
+    {
+      "id": "q017",
+      "question": "What happens to the old webhook secret after rotation?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 278.7,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 6778.5,
+        "total": 7060.5
+      },
+      "retrieved_sources": [
+        "webhooks.md",
+        "authentication.md",
+        "authentication.md",
+        "authentication.md",
+        "webhooks.md"
+      ],
+      "expected_sources": [
+        "webhooks.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.95,
+        "retrieval_relevance": 0.7,
+        "citation_accuracy": 1.0,
+        "composite": 0.925
+      }
+    },
+    {
+      "id": "q018",
+      "question": "What is the burst limit for the Standard tier?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 280.1,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 7866.0,
+        "total": 8149.4
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "overview.md",
+        "rate-limiting.md",
+        "rate-limiting.md"
+      ],
+      "expected_sources": [
+        "rate-limiting.md"
+      ],
+      "judge": {
+        "correctness": 0.5,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 0.7
+      }
+    },
+    {
+      "id": "q019",
+      "question": "What is the `X-RateLimit-Window` header value for the Standard tier?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 299.6,
+        "retrieve": 3.4,
+        "rerank": 0.0,
+        "generate": 9635.7,
+        "total": 9938.7
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "rate-limiting.md"
+      ],
+      "expected_sources": [
+        "rate-limiting.md"
+      ],
+      "judge": {
+        "correctness": 0.9,
+        "faithfulness": 0.9,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 0.5,
+        "composite": 0.84
+      }
+    },
+    {
+      "id": "q020",
+      "question": "What does the `NEXUS_FLUSH_INTERVAL` environment variable control?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 306.0,
+        "retrieve": 3.2,
+        "rerank": 0.0,
+        "generate": 6377.8,
+        "total": 6687.0
+      },
+      "retrieved_sources": [
+        "configuration.md",
+        "configuration.md",
+        "data-formats.md",
+        "configuration.md",
+        "configuration.md"
+      ],
+      "expected_sources": [
+        "configuration.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 1.0
+      }
+    },
+    {
+      "id": "q021",
+      "question": "How do I upgrade my Standard tier rate limit and what is the process?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 278.7,
+        "retrieve": 3.4,
+        "rerank": 0.0,
+        "generate": 13824.2,
+        "total": 14106.4
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "overview.md",
+        "rate-limiting.md"
+      ],
+      "expected_sources": [
+        "rate-limiting.md"
+      ],
+      "judge": {
+        "correctness": 0.5,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.9,
+        "citation_accuracy": 0.0,
+        "composite": 0.48
+      }
+    },
+    {
+      "id": "q022",
+      "question": "I'm migrating from v1 to v2 \u2014 what changes do I need to make to event consumption code?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 267.3,
+        "retrieve": 3.2,
+        "rerank": 0.0,
+        "generate": 11772.8,
+        "total": 12043.2
+      },
+      "retrieved_sources": [
+        "migration.md",
+        "migration.md",
+        "migration.md",
+        "installation.md",
+        "api-reference.md"
+      ],
+      "expected_sources": [
+        "migration.md",
+        "api-reference.md"
+      ],
+      "judge": {
+        "correctness": 0.5,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.75,
+        "composite": 0.55
+      }
+    },
+    {
+      "id": "q023",
+      "question": "If I get NXE-4003 on a pipeline.write operation, what are the possible causes and fixes?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 308.2,
+        "retrieve": 3.5,
+        "rerank": 0.0,
+        "generate": 9387.9,
+        "total": 9699.6
+      },
+      "retrieved_sources": [
+        "error-codes.md",
+        "error-codes.md",
+        "error-codes.md",
+        "error-codes.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "error-codes.md",
+        "authentication.md"
+      ],
+      "judge": {
+        "correctness": 0.7,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.6599999999999999
+      }
+    },
+    {
+      "id": "q024",
+      "question": "How do I safely handle NXE-5004 errors when publishing a batch?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 301.6,
+        "retrieve": 3.1,
+        "rerank": 0.0,
+        "generate": 14255.6,
+        "total": 14560.3
+      },
+      "retrieved_sources": [
+        "troubleshooting.md",
+        "error-codes.md",
+        "error-codes.md",
+        "api-reference.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "troubleshooting.md",
+        "api-reference.md"
+      ],
+      "judge": {
+        "correctness": 0.5,
+        "faithfulness": 0.9,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.72
+      }
+    },
+    {
+      "id": "q025",
+      "question": "What are the SLA uptime commitments and what tier do I need for 99.99% uptime?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 302.2,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 6479.2,
+        "total": 6784.7
+      },
+      "retrieved_sources": [
+        "overview.md",
+        "rate-limiting.md",
+        "overview.md",
+        "rate-limiting.md",
+        "rate-limiting.md"
+      ],
+      "expected_sources": [
+        "overview.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.75
+      }
+    },
+    {
+      "id": "q026",
+      "question": "I'm on Developer tier and hitting rate limits. What are my publish limits and how do I increase them?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 301.5,
+        "retrieve": 3.5,
+        "rerank": 0.0,
+        "generate": 11232.9,
+        "total": 11538.0
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "rate-limiting.md"
+      ],
+      "expected_sources": [
+        "rate-limiting.md",
+        "overview.md"
+      ],
+      "judge": {
+        "correctness": 0.5,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.0,
+        "composite": 0.4
+      }
+    },
+    {
+      "id": "q027",
+      "question": "What v1 event IDs can still be queried after migrating to v2 and for how long?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 313.9,
+        "retrieve": 2.9,
+        "rerank": 0.0,
+        "generate": 7129.8,
+        "total": 7446.6
+      },
+      "retrieved_sources": [
+        "migration.md",
+        "migration.md",
+        "data-formats.md",
+        "migration.md",
+        "migration.md"
+      ],
+      "expected_sources": [
+        "migration.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 1.0
+      }
+    },
+    {
+      "id": "q028",
+      "question": "How should I implement webhook signature verification and what algorithm does Nexus use?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 278.2,
+        "retrieve": 3.6,
+        "rerank": 0.0,
+        "generate": 11098.0,
+        "total": 11379.9
+      },
+      "retrieved_sources": [
+        "webhooks.md",
+        "authentication.md",
+        "webhooks.md",
+        "webhooks.md",
+        "webhooks.md"
+      ],
+      "expected_sources": [
+        "webhooks.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.9,
+        "citation_accuracy": 1.0,
+        "composite": 0.8300000000000001
+      }
+    },
+    {
+      "id": "q029",
+      "question": "Can I use Protobuf schemas with Nexus streams and how do I set it up?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 274.0,
+        "retrieve": 3.8,
+        "rerank": 0.0,
+        "generate": 10126.3,
+        "total": 10404.1
+      },
+      "retrieved_sources": [
+        "data-formats.md",
+        "configuration.md",
+        "overview.md",
+        "data-formats.md",
+        "overview.md"
+      ],
+      "expected_sources": [
+        "data-formats.md"
+      ],
+      "judge": {
+        "correctness": 0.85,
+        "faithfulness": 0.1,
+        "retrieval_relevance": 0.7,
+        "citation_accuracy": 0.3333333333333333,
+        "composite": 0.4916666666666667
+      }
+    },
+    {
+      "id": "q030",
+      "question": "What is JWT authentication in Nexus and which tier supports it?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 278.4,
+        "retrieve": 3.5,
+        "rerank": 0.0,
+        "generate": 8532.4,
+        "total": 8814.4
+      },
+      "retrieved_sources": [
+        "authentication.md",
+        "rate-limiting.md",
+        "authentication.md",
+        "rate-limiting.md",
+        "authentication.md"
+      ],
+      "expected_sources": [
+        "authentication.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 0.0,
+        "composite": 0.6499999999999999
+      }
+    },
+    {
+      "id": "q031",
+      "question": "How do I delete a stream that has active consumers?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 269.6,
+        "retrieve": 3.5,
+        "rerank": 0.0,
+        "generate": 9047.2,
+        "total": 9320.3
+      },
+      "retrieved_sources": [
+        "api-reference.md",
+        "error-codes.md",
+        "api-reference.md",
+        "api-reference.md",
+        "api-reference.md"
+      ],
+      "expected_sources": [
+        "api-reference.md",
+        "error-codes.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.9,
+        "citation_accuracy": 1.0,
+        "composite": 0.8300000000000001
+      }
+    },
+    {
+      "id": "q032",
+      "question": "When does the v1 API reach end of life and what happens to requests after that date?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 280.2,
+        "retrieve": 3.4,
+        "rerank": 0.0,
+        "generate": 7454.3,
+        "total": 7737.9
+      },
+      "retrieved_sources": [
+        "migration.md",
+        "migration.md",
+        "overview.md",
+        "rate-limiting.md",
+        "migration.md"
+      ],
+      "expected_sources": [
+        "migration.md",
+        "overview.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.6666666666666666,
+        "composite": 0.6833333333333332
+      }
+    },
+    {
+      "id": "q033",
+      "question": "What metrics can I retrieve for a pipeline and what time windows are supported?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 294.9,
+        "retrieve": 3.6,
+        "rerank": 0.0,
+        "generate": 8315.7,
+        "total": 8614.2
+      },
+      "retrieved_sources": [
+        "api-reference.md",
+        "api-reference.md",
+        "webhooks.md",
+        "rate-limiting.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "api-reference.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.7,
+        "citation_accuracy": 1.0,
+        "composite": 0.79
+      }
+    },
+    {
+      "id": "q034",
+      "question": "What is the difference between strict, per_partition, and best_effort stream ordering modes?",
+      "category": "unanswerable",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 268.3,
+        "retrieve": 4.3,
+        "rerank": 0.0,
+        "generate": 7191.6,
+        "total": 7464.2
+      },
+      "retrieved_sources": [
+        "configuration.md",
+        "configuration.md",
+        "data-formats.md",
+        "overview.md",
+        "api-reference.md"
+      ],
+      "expected_sources": [
+        "configuration.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.8,
+        "citation_accuracy": 1.0,
+        "composite": 0.81
+      }
+    },
+    {
+      "id": "q035",
+      "question": "What is the maximum size of a Nexus workspace?",
+      "category": "unanswerable",
+      "hit@1": 0.0,
+      "hit@3": 0.0,
+      "hit@5": 0.0,
+      "mrr@10": 0.0,
+      "latency_ms": {
+        "embed": 276.1,
+        "retrieve": 4.6,
+        "rerank": 0.0,
+        "generate": 9079.3,
+        "total": 9360.0
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "error-codes.md",
+        "overview.md",
+        "installation.md",
+        "configuration.md"
+      ],
+      "expected_sources": [],
+      "judge": {
+        "correctness": 0.8,
+        "faithfulness": 0.85,
+        "retrieval_relevance": 0.1,
+        "citation_accuracy": 0.6666666666666666,
+        "composite": 0.6483333333333333
+      }
+    },
+    {
+      "id": "q036",
+      "question": "What programming languages does the Nexus SDK support?",
+      "category": "unanswerable",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 313.3,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 4605.0,
+        "total": 4921.6
+      },
+      "retrieved_sources": [
+        "overview.md",
+        "error-codes.md",
+        "installation.md",
+        "webhooks.md",
+        "installation.md"
+      ],
+      "expected_sources": [
+        "overview.md"
+      ],
+      "judge": {
+        "correctness": 0.5,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.75
+      }
+    },
+    {
+      "id": "q037",
+      "question": "How do I set up multi-region replication for a Nexus stream?",
+      "category": "unanswerable",
+      "hit@1": 0.0,
+      "hit@3": 0.0,
+      "hit@5": 0.0,
+      "mrr@10": 0.0,
+      "latency_ms": {
+        "embed": 308.4,
+        "retrieve": 3.4,
+        "rerank": 0.0,
+        "generate": 10093.9,
+        "total": 10405.8
+      },
+      "retrieved_sources": [
+        "configuration.md",
+        "overview.md",
+        "configuration.md",
+        "configuration.md",
+        "overview.md"
+      ],
+      "expected_sources": [],
+      "judge": {
+        "correctness": 0.8,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.69
+      }
+    },
+    {
+      "id": "q038",
+      "question": "What is the pricing for the Standard tier?",
+      "category": "unanswerable",
+      "hit@1": 0.0,
+      "hit@3": 0.0,
+      "hit@5": 0.0,
+      "mrr@10": 0.0,
+      "latency_ms": {
+        "embed": 319.3,
+        "retrieve": 3.2,
+        "rerank": 0.0,
+        "generate": 8343.7,
+        "total": 8666.2
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "overview.md",
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "overview.md"
+      ],
+      "expected_sources": [],
+      "judge": {
+        "correctness": 0.7,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.0,
+        "composite": 0.45999999999999996
+      }
+    },
+    {
+      "id": "q039",
+      "question": "Does Nexus support GraphQL subscriptions?",
+      "category": "unanswerable",
+      "hit@1": 0.0,
+      "hit@3": 0.0,
+      "hit@5": 0.0,
+      "mrr@10": 0.0,
+      "latency_ms": {
+        "embed": 268.4,
+        "retrieve": 3.2,
+        "rerank": 0.0,
+        "generate": 9772.3,
+        "total": 10043.9
+      },
+      "retrieved_sources": [
+        "webhooks.md",
+        "installation.md",
+        "overview.md",
+        "authentication.md",
+        "overview.md"
+      ],
+      "expected_sources": [],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.0,
+        "composite": 0.5499999999999999
+      }
+    },
+    {
+      "id": "q040",
+      "question": "What is the maximum retention period for events in the Standard tier?",
+      "category": "unanswerable",
+      "hit@1": 0.0,
+      "hit@3": 0.0,
+      "hit@5": 1.0,
+      "mrr@10": 0.2,
+      "latency_ms": {
+        "embed": 317.8,
+        "retrieve": 4.6,
+        "rerank": 0.0,
+        "generate": 11662.9,
+        "total": 11985.4
+      },
+      "retrieved_sources": [
+        "overview.md",
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "error-codes.md",
+        "configuration.md"
+      ],
+      "expected_sources": [
+        "configuration.md"
+      ],
+      "judge": {
+        "correctness": 0.6,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.0,
+        "composite": 0.42999999999999994
+      }
+    },
+    {
+      "id": "q041",
+      "question": "How do I delete an event after it has been published?",
+      "category": "unanswerable",
+      "hit@1": 0.0,
+      "hit@3": 0.0,
+      "hit@5": 0.0,
+      "mrr@10": 0.0,
+      "latency_ms": {
+        "embed": 310.5,
+        "retrieve": 3.6,
+        "rerank": 0.0,
+        "generate": 8540.6,
+        "total": 8854.6
+      },
+      "retrieved_sources": [
+        "api-reference.md",
+        "error-codes.md",
+        "api-reference.md",
+        "api-reference.md",
+        "troubleshooting.md"
+      ],
+      "expected_sources": [],
+      "judge": {
+        "correctness": 0.9,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.72
+      }
+    },
+    {
+      "id": "q042",
+      "question": "What is the NXE error code for an expired event?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 292.8,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 8175.2,
+        "total": 8471.4
+      },
+      "retrieved_sources": [
+        "error-codes.md",
+        "error-codes.md",
+        "error-codes.md",
+        "error-codes.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "error-codes.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 1.0
+      }
+    },
+    {
+      "id": "q043",
+      "question": "What rate limit response headers are returned and what does each mean?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 285.3,
+        "retrieve": 2.6,
+        "rerank": 0.0,
+        "generate": 9788.8,
+        "total": 10076.6
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "error-codes.md",
+        "rate-limiting.md",
+        "webhooks.md"
+      ],
+      "expected_sources": [
+        "rate-limiting.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.9,
+        "citation_accuracy": 0.3333333333333333,
+        "composite": 0.6966666666666667
+      }
+    },
+    {
+      "id": "q044",
+      "question": "Can I pause and resume a pipeline without losing processing state?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 278.1,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 5704.0,
+        "total": 5985.4
+      },
+      "retrieved_sources": [
+        "api-reference.md",
+        "api-reference.md",
+        "overview.md",
+        "error-codes.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "api-reference.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.8999999999999999
+      }
+    },
+    {
+      "id": "q045",
+      "question": "How does Nexus handle v1 stream names that don't conform to v2 naming rules?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 307.8,
+        "retrieve": 4.9,
+        "rerank": 0.0,
+        "generate": 9376.7,
+        "total": 9689.4
+      },
+      "retrieved_sources": [
+        "migration.md",
+        "troubleshooting.md",
+        "migration.md",
+        "overview.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "migration.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.8,
+        "citation_accuracy": 0.6666666666666666,
+        "composite": 0.7433333333333333
+      }
+    },
+    {
+      "id": "q046",
+      "question": "How is the exponential backoff for rate limit retries recommended to be implemented?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 279.5,
+        "retrieve": 3.9,
+        "rerank": 0.0,
+        "generate": 11670.0,
+        "total": 11953.4
+      },
+      "retrieved_sources": [
+        "rate-limiting.md",
+        "rate-limiting.md",
+        "error-codes.md",
+        "rate-limiting.md",
+        "rate-limiting.md"
+      ],
+      "expected_sources": [
+        "rate-limiting.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 0.5,
+        "composite": 0.7499999999999999
+      }
+    },
+    {
+      "id": "q047",
+      "question": "What command migrates a v1 YAML pipeline spec to v2 JSON format?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 394.1,
+        "retrieve": 3.2,
+        "rerank": 0.0,
+        "generate": 6038.0,
+        "total": 6435.2
+      },
+      "retrieved_sources": [
+        "migration.md",
+        "migration.md",
+        "migration.md",
+        "api-reference.md",
+        "api-reference.md"
+      ],
+      "expected_sources": [
+        "migration.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.0,
+        "retrieval_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "composite": 0.7
+      }
+    },
+    {
+      "id": "q048",
+      "question": "Can I query a stream for events using a timestamp as the starting point?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 314.3,
+        "retrieve": 3.2,
+        "rerank": 0.0,
+        "generate": 10539.5,
+        "total": 10856.9
+      },
+      "retrieved_sources": [
+        "api-reference.md",
+        "migration.md",
+        "data-formats.md",
+        "installation.md",
+        "api-reference.md"
+      ],
+      "expected_sources": [
+        "api-reference.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.0,
+        "composite": 0.5499999999999999
+      }
+    },
+    {
+      "id": "q049",
+      "question": "How does workspace federation work and how do I enable it?",
+      "category": "ambiguous",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 450.0,
+        "retrieve": 3.3,
+        "rerank": 0.0,
+        "generate": 9709.5,
+        "total": 10162.7
+      },
+      "retrieved_sources": [
+        "overview.md",
+        "installation.md",
+        "error-codes.md",
+        "installation.md",
+        "api-reference.md"
+      ],
+      "expected_sources": [
+        "overview.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 1.0,
+        "composite": 0.75
+      }
+    },
+    {
+      "id": "q050",
+      "question": "Is the Nexus API GDPR compliant?",
+      "category": "unanswerable",
+      "hit@1": 0.0,
+      "hit@3": 0.0,
+      "hit@5": 0.0,
+      "mrr@10": 0.0,
+      "latency_ms": {
+        "embed": 252.1,
+        "retrieve": 3.7,
+        "rerank": 0.0,
+        "generate": 10444.0,
+        "total": 10699.7
+      },
+      "retrieved_sources": [
+        "installation.md",
+        "overview.md",
+        "overview.md",
+        "authentication.md",
+        "data-formats.md"
+      ],
+      "expected_sources": [],
+      "judge": {
+        "correctness": 0.95,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.3333333333333333,
+        "composite": 0.6016666666666666
+      }
+    },
+    {
+      "id": "q051",
+      "question": "What is the idempotency_key parameter in events.publish_batch and when should I use it?",
+      "category": "multi_hop",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 254.5,
+        "retrieve": 3.1,
+        "rerank": 0.0,
+        "generate": 11218.3,
+        "total": 11476.0
+      },
+      "retrieved_sources": [
+        "troubleshooting.md",
+        "api-reference.md",
+        "api-reference.md",
+        "rate-limiting.md",
+        "installation.md"
+      ],
+      "expected_sources": [
+        "troubleshooting.md"
+      ],
+      "judge": {
+        "correctness": 0.75,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.0,
+        "composite": 0.475
+      }
+    },
+    {
+      "id": "q052",
+      "question": "Where can Enterprise customers get 24/7 emergency support?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 309.4,
+        "retrieve": 3.7,
+        "rerank": 0.0,
+        "generate": 6060.1,
+        "total": 6373.1
+      },
+      "retrieved_sources": [
+        "troubleshooting.md",
+        "rate-limiting.md",
+        "overview.md",
+        "migration.md",
+        "error-codes.md"
+      ],
+      "expected_sources": [
+        "troubleshooting.md"
+      ],
+      "judge": {
+        "correctness": 1.0,
+        "faithfulness": 1.0,
+        "retrieval_relevance": 0.5,
+        "citation_accuracy": 0.0,
+        "composite": 0.7
+      }
+    },
+    {
+      "id": "q053",
+      "question": "What is the difference between a live key and a test key?",
+      "category": "simple_lookup",
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr@10": 1.0,
+      "latency_ms": {
+        "embed": 307.7,
+        "retrieve": 3.7,
+        "rerank": 0.0,
+        "generate": 10294.1,
+        "total": 10605.4
+      },
+      "retrieved_sources": [
+        "authentication.md",
+        "authentication.md",
+        "troubleshooting.md",
+        "authentication.md",
+        "authentication.md"
+      ],
+      "expected_sources": [
+        "authentication.md"
+      ],
+      "judge": {
+        "correctness": 0.95,
+        "faithfulness": 0.5,
+        "retrieval_relevance": 0.9,
+        "citation_accuracy": 1.0,
+        "composite": 0.815
+      }
+    }
+  ]
+}

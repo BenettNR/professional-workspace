@@ -116,7 +116,11 @@ Each row is one pipeline configuration evaluated on the full golden dataset.
 
 **How to read this:** higher is better for retrieval metrics (hit@k, MRR); \
 lower is better for latency. The deltas between rows tell you whether each \
-stage of the pipeline is *measurably* justified.
+stage of the pipeline is *measurably* justified. If hybrid does **not** beat \
+dense-only here, that is a real finding, not a bug — see \
+[ADR-001 Validation](adr/001-hybrid-retrieval.md#validation) for the analysis \
+of when hybrid pays off (large/noisy corpora, exact-keyword-heavy queries) \
+versus when dense-only is the better default (small clean corpora, strong embedder).
 
 ## Latency breakdown (per-stage, p50)
 
@@ -131,9 +135,11 @@ the trade-off in your run.
 {_format_by_category(results)}
 
 `simple_lookup` should be near 1.0 for any working config (exact-keyword or \
-direct paraphrase). `multi_hop` benefits most from rerank. `unanswerable` is \
-0.0 by design — the dataset records no `expected_sources`, so any retrieval \
-result is correctly counted as a non-hit.
+direct paraphrase). `multi_hop` benefits most from rerank. `unanswerable` \
+mixes truly-unanswerable questions (no `expected_sources`, which score 0 by \
+design) with *partially*-answerable ones that do name a source — so this \
+column is low but non-zero, and is best read as "did we retrieve the one \
+doc that's at least tangentially relevant".
 
 ## How to reproduce
 

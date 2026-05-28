@@ -10,13 +10,13 @@
 
 A question-answering service over your own documents that returns **grounded answers with verified citations** and **explicit confidence scores** — not just plausible-sounding prose. Built to demonstrate the engineering decisions that separate a working RAG demo from a production-ready RAG service.
 
-**Design decisions are written down.** Every non-obvious choice has an [ADR](docs/adr/) explaining what we considered and why we picked this. The [eval harness](docs/eval-results.md) proves the architecture isn't cargo-cult — every stage of the pipeline is independently ablatable and measurably justified.
+**Design decisions are written down.** Every non-obvious choice has an [ADR](docs/adr/) explaining what we considered and why we picked this. The [eval harness](docs/eval-results.md) keeps the architecture honest — every stage is independently ablatable, and the published results candidly report **where hybrid retrieval does and doesn't beat a plain dense baseline** (on this small corpus, dense-only actually wins — and [ADR-001](docs/adr/001-hybrid-retrieval.md#validation) explains exactly why).
 
 ---
 
 ## Why this exists
 
-LLMs hallucinate. Citations matter. **Retrieval quality is the lever**: a 5% improvement in what you put in the context window beats a much larger investment in the LLM itself. This project is a deliberate study in how to build that lever — and then prove it works with a published ablation table.
+LLMs hallucinate. Citations matter. **Retrieval quality is the lever**: a 5% improvement in what you put in the context window beats a much larger investment in the LLM itself. This project is a deliberate study in how to build that lever — and then *measure* it with a published ablation table, including the case where the measurement refuted the original hypothesis (hybrid retrieval underperformed dense-only on this corpus — the eval caught it, and [ADR-001](docs/adr/001-hybrid-retrieval.md#validation) documents why).
 
 Three failure modes RAG systems most often ship with, and how this addresses them:
 
@@ -32,7 +32,15 @@ Three failure modes RAG systems most often ship with, and how this addresses the
 
 The pipeline ships with a reproducible ablation harness that compares **dense-only**, **hybrid** (dense + sparse + RRF), and **hybrid+rerank** configurations on a 53-question golden dataset over the Nexus API corpus. Metrics: `hit@1/3/5`, `MRR@10`, per-stage latency (p50/p95), plus LLM-as-judge dimensions when keys are available.
 
-→ Full table: [`docs/eval-results.md`](docs/eval-results.md) — `make eval` to regenerate.
+| Config | hit@1 | hit@3 | MRR@10 |
+|---|---|---|---|
+| `dense-only` | **0.811** | 0.849 | **0.839** |
+| `hybrid` | 0.736 | 0.811 | 0.774 |
+| `hybrid+rerank` | 0.717 | **0.849** | 0.784 |
+
+**Honest result:** on this 109-chunk corpus, **dense-only wins** — it's too small and clean for hybrid retrieval to pay off (`voyage-3` dense recall is near-perfect, so BM25 + RRF add noise). That's a real finding, surfaced by the eval rather than hidden. [ADR-001](docs/adr/001-hybrid-retrieval.md#validation) explains when hybrid *does* win (large/noisy corpora, exact-keyword-heavy queries).
+
+→ Full table + latency + per-category: [`docs/eval-results.md`](docs/eval-results.md) — `make eval` to regenerate.
 
 ## Architecture
 
@@ -80,7 +88,7 @@ Each stage is in its own package with one responsibility:
 ## Highlights
 
 - **Hybrid retrieval** — dense semantic vectors via [Voyage AI](https://voyageai.com) (Anthropic's recommended embedding partner) + BM25 sparse keyword retrieval, fused with Reciprocal Rank Fusion (k=60, the standard smoothing constant).
-- **Cross-encoder reranking** — `ms-marco-MiniLM-L-6-v2` reorders the top-20 fused candidates down to a top-5 context window, trading a 200ms latency hit for a meaningful MRR bump.
+- **Cross-encoder reranking** — `ms-marco-MiniLM-L-6-v2` reorders the top-20 fused candidates down to a top-5 context window (~300 ms). On a large/noisy corpus this is a precision win; on the small demo corpus the eval shows it trades rank-1 precision for top-3 recall — see [the published results](docs/eval-results.md).
 - **Asymmetric embeddings** — documents and queries are embedded with different `input_type` values, which Voyage's bi-encoders use to improve retrieval precision.
 - **Citation verification** — every `[N]` citation in the answer is fact-checked against the cited chunk using Claude as LLM-as-judge. Verdict and reason are returned with the response.
 - **Composite confidence** — three dimensions (retrieval confidence, citation coverage, answer completeness) blended into a single score the API exposes alongside its components.

@@ -1,6 +1,6 @@
 # ADR-001: Hybrid Retrieval (Dense + Sparse + Rerank)
 
-**Status:** Accepted
+**Status:** Accepted, with a validation caveat — the first live eval (2026-05-27) found dense-only outperforms hybrid on the current small corpus. See [Validation update](#validation-update--2026-05-27-first-live-run-hypothesis-not-confirmed-on-this-corpus).
 **Date:** 2026-05-19
 **Deciders:** Project owner (portfolio context)
 
@@ -62,9 +62,33 @@ The `dense_only=True` flag on `HybridRetriever.retrieve()` is preserved as an ab
 
 ## Validation
 
-The eval harness in `src/evaluation/runner.py` runs all three ablation configurations on the 53-question golden dataset and writes the comparison to `docs/eval-results.md`. The table is regenerated on every `make eval`. The decision in this ADR stands as long as the table shows `hybrid+rerank` is measurably best on the corpus this service serves.
+The eval harness in `src/evaluation/runner.py` runs all three ablation configurations on the 53-question golden dataset and writes the comparison to `docs/eval-results.md`. The table is regenerated on every `make eval`.
 
-If a future change makes one stage no longer pay for itself in that table, this ADR should be revisited rather than the stage silently kept.
+### Validation update — 2026-05-27 (first live run): hypothesis NOT confirmed on this corpus
+
+The first real ablation run produced a result that **contradicts the prediction above**:
+
+| Config | hit@1 | hit@3 | MRR@10 |
+|---|---|---|---|
+| `dense-only` | **0.811** | 0.849 | **0.839** |
+| `hybrid` | 0.736 | 0.811 | 0.774 |
+| `hybrid+rerank` | 0.717 | **0.849** | 0.784 |
+
+On this corpus, **dense-only wins hit@1 and MRR**. Hybrid and hybrid+rerank are *worse* on rank-1 precision. This ADR predicted hybrid+rerank would be measurably best; the data says otherwise. Reporting it rather than burying it — that's the entire point of having an eval harness.
+
+**Why dense-only wins here (analysis, not excuse):**
+
+1. **The corpus is small and clean** — 11 documents, 109 chunks, well-structured technical Markdown. Hybrid retrieval's value is recovering *exact-keyword* matches that dense embeddings blur (rare error codes, config keys) **on large, noisy corpora where dense recall degrades**. With 109 chunks and a strong embedder (`voyage-3`), dense retrieval almost never misses the relevant chunk, so BM25 + RRF mostly inject lower-quality candidates that *demote* the correct dense hit. Sparse retrieval helps when dense is weak; here dense isn't weak.
+2. **The cross-encoder rerank trades rank-1 precision for top-3 recall.** `hybrid+rerank` has the lowest hit@1 (0.717) but ties dense on hit@3 (0.849) and beats plain hybrid on `multi_hop` queries (0.929 vs 0.857). The reranker reorders the candidate set; on a corpus where the dense top-1 was already correct, reordering can only hurt hit@1.
+3. **Generation dominates latency** (~8,000 ms p50). The retrieval and rerank stages (3–300 ms) are negligible by comparison — so the *cost* side of the hybrid trade-off is also smaller than this ADR implied.
+
+**What this means for the decision:**
+
+- For *this* corpus and query distribution, **dense-only would be the right production default.** Hybrid is not paying for itself.
+- Hybrid+rerank is expected to win on the conditions it was designed for: a **larger, noisier corpus** (10k+ chunks), a **higher proportion of exact-keyword queries** (error codes, parameter names, version strings) that dense blurs, or a **weaker/cheaper embedder**. None of those hold for the 109-chunk demo corpus.
+- The architecture is kept as the *configurable default* (the `dense_only` flag and RRF weights are all tunable), but the honest recommendation for a small clean corpus is to run dense-only. The eval harness is what surfaces this per-corpus rather than guessing.
+
+This is the intended workflow: build the capability, measure it, and let the data — not the original hypothesis — decide. A future change to a larger corpus should re-run `make eval` and revisit this conclusion.
 
 ## Links
 
