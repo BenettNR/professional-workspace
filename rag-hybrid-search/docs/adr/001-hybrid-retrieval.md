@@ -1,6 +1,6 @@
 # ADR-001: Hybrid Retrieval (Dense + Sparse + Rerank)
 
-**Status:** Accepted, with a validation caveat — the first live eval (2026-05-27) found dense-only outperforms hybrid on the current small corpus. See [Validation update](#validation-update--2026-05-27-first-live-run-hypothesis-not-confirmed-on-this-corpus).
+**Status:** Capability accepted; default operating point revised to dense-only based on validation. Three independent test conditions (109-chunk single-domain, 1,061-chunk multi-domain, 25-question keyword-heavy) all show dense-only winning hit@1 and MRR with `voyage-3`. See [Validation](#validation).
 **Date:** 2026-05-19
 **Deciders:** Project owner (portfolio context)
 
@@ -89,6 +89,41 @@ On this corpus, **dense-only wins hit@1 and MRR**. Hybrid and hybrid+rerank are 
 - The architecture is kept as the *configurable default* (the `dense_only` flag and RRF weights are all tunable), but the honest recommendation for a small clean corpus is to run dense-only. The eval harness is what surfaces this per-corpus rather than guessing.
 
 This is the intended workflow: build the capability, measure it, and let the data — not the original hypothesis — decide. A future change to a larger corpus should re-run `make eval` and revisit this conclusion.
+
+### Validation update — 2026-05-31 (three-condition retest): hypothesis still not confirmed
+
+The 2026-05-27 result above prompted the obvious follow-up: was the small corpus the reason? Two further conditions were tested, each designed to probe a regime where ADR-001's original reasoning predicted hybrid retrieval would start to win.
+
+**Condition B — 10× larger corpus, same query distribution.**
+Four arxiv RAG survey PDFs were uploaded via `POST /v1/ingest`, adding 952 chunks alongside the original 109 from the Nexus corpus (1,061 total). The same 53 Nexus golden questions were re-run.
+
+| Config | hit@1 | hit@3 | hit@5 | MRR@10 |
+|---|---|---|---|---|
+| `dense-only` | **0.792** | 0.830 | 0.868 | **0.820** |
+| `hybrid` | 0.717 | 0.849 | 0.868 | 0.784 |
+| `hybrid+rerank` | 0.717 | 0.849 | 0.868 | 0.784 |
+
+Dense-only's hit@1 dropped only 0.019 points (0.811 → 0.792) despite a 9.7× corpus expansion. The added topical noise barely degrades dense recall — `voyage-3` embeddings cleanly discriminate between Nexus API content and unrelated arxiv content.
+
+**Condition C — different domain, intentionally keyword-heavy queries.**
+A second golden dataset of 25 questions was crafted over the four RAG papers, deliberately skewed toward exact-keyword lookups (RAGAS, ARES, HyDE, FLARE, Self-RAG, RGB / CRUD / RECALL benchmark names). This is the regime where BM25's exact-match strength is most likely to surface.
+
+| Config | hit@1 | hit@3 | hit@5 | MRR@10 |
+|---|---|---|---|---|
+| `dense-only` | **0.880** | 0.960 | 0.960 | **0.913** |
+| `hybrid` | 0.800 | 0.960 | 0.960 | 0.867 |
+| `hybrid+rerank` | 0.800 | 0.960 | 0.960 | 0.867 |
+
+Dense-only's hit@1 is *higher* on this dataset (0.880) than on the original Nexus dataset (0.811). Acronyms and tool names in academic prose are surrounded by enough context (`"RAGAS evaluates RAG systems by…"`) that the bi-encoder picks them up reliably; the exact-token advantage BM25 would have on bare-token queries is absorbed.
+
+**Conclusion.**
+The hypothesis "hybrid retrieval wins at scale or on keyword-heavy queries" is not supported by any of the three conditions tested. With a modern bi-encoder (the `voyage-3` family), dense-only is the better choice for production traffic on the corpora and query distributions in this evaluation. The architecture is kept configurable — the `dense_only` flag and RRF weights are tunable, and the eval harness can be re-run against any change. The repo's demo default remains the full hybrid+rerank pipeline so the UI exercises every stage and a reviewer can flip the "Dense-only mode" toggle to see the result on a live query; a production deployment on a similar corpus should set `dense_only=True` until the data say otherwise.
+
+The conditions under which the original hypothesis would likely hold remain plausible but unreproduced: a weaker embedder, a corpus on the order of 10⁵+ chunks where dense recall actually degrades, or queries truly out-of-distribution for the embedder's training data. None of these are present here.
+
+A related observation: in conditions B and C, `hybrid` and `hybrid+rerank` are numerically identical on every metric. The cross-encoder is reordering chunks within the top-5 candidate set, but it does not change which *source documents* appear there — and hit@k is computed at the source-filename granularity. The reranker is doing work; that work is not visible to this metric.
+
+**Tooling.** [`scripts/compare_retrieval.py`](../../scripts/compare_retrieval.py) runs this comparison against any `GoldenDataset` with `--dataset PATH`. Zero LLM calls, ~30 seconds, free to re-run on any future change. The dataset used for Condition C is at [`eval/golden_dataset_rag_papers.json`](../../eval/golden_dataset_rag_papers.json).
 
 ## Links
 

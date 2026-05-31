@@ -38,9 +38,11 @@ The pipeline ships with a reproducible ablation harness that compares **dense-on
 | `hybrid` | 0.736 | 0.811 | 0.774 |
 | `hybrid+rerank` | 0.717 | **0.849** | 0.784 |
 
-**Honest result:** on this 109-chunk corpus, **dense-only wins** — it's too small and clean for hybrid retrieval to pay off (`voyage-3` dense recall is near-perfect, so BM25 + RRF add noise). That's a real finding, surfaced by the eval rather than hidden. [ADR-001](docs/adr/001-hybrid-retrieval.md#validation) explains when hybrid *does* win (large/noisy corpora, exact-keyword-heavy queries).
+**Honest result, three conditions tested:** dense-only wins all three — the original 109-chunk Nexus corpus, the same corpus expanded 10× with four RAG survey papers (1,061 chunks), and a separate 25-question dataset over the RAG papers that was deliberately skewed toward exact-keyword queries (acronyms, benchmark and tool names — the regime where BM25 should shine). Dense-only's hit@1 was actually *highest* on the keyword-heavy dataset (0.880). With a modern bi-encoder like `voyage-3`, the hybrid and cross-encoder stages don't earn their keep on the corpora and queries tested.
 
-→ Full table + latency + per-category: [`docs/eval-results.md`](docs/eval-results.md) — `make eval` to regenerate.
+The architecture is kept configurable — `dense_only` flag, tunable RRF weights — and the eval harness can be re-run against any future workload. The eval-driven recommendation for production deployments on similar corpora is to set `dense_only=True`; the repo's demo default keeps the full hybrid+rerank pipeline so the UI exercises every stage (flip the "Dense-only mode" toggle to compare live). [ADR-001 Validation](docs/adr/001-hybrid-retrieval.md#validation) has the per-condition tables and the analysis.
+
+→ Full table + latency + per-category: [`docs/eval-results.md`](docs/eval-results.md). Retrieval-only comparison (free, ~30 sec, any `GoldenDataset`): `uv run python scripts/compare_retrieval.py --dataset <path>`.
 
 ## Architecture
 
