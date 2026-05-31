@@ -1,0 +1,312 @@
+{
+  "version": "1.0",
+  "corpus": "rag-papers (4 arxiv surveys)",
+  "description": "Golden questions designed to test retrieval over four RAG survey papers. Heavy on exact-keyword queries (acronyms, tool names, benchmark names) to test whether hybrid retrieval starts paying off on a query distribution where BM25's exact-match strength matters.",
+  "papers": {
+    "2312.10997": "rag-survey-gao-2024.pdf — Gao et al, comprehensive RAG survey (Naive/Advanced/Modular)",
+    "2410.12837": "2410.12837.pdf — RAG evolution + current landscape + future directions",
+    "2402.19473": "2402.19473.pdf — RAG for AI-Generated Content (multimodal)",
+    "2409.14924": "2409.14924.pdf — RAG and Beyond: making LLMs use external data wisely"
+  },
+  "categories": {
+    "definitional": "What is X? — should be answerable from multiple surveys",
+    "exact_keyword": "Specific tool / benchmark / acronym lookups — where BM25 should shine",
+    "comparative": "Difference between X and Y",
+    "multi_hop": "Synthesizing across sections / papers",
+    "simple_lookup": "Single factual answer with clear source"
+  },
+  "questions": [
+    {
+      "id": "q01",
+      "question": "What is Naive RAG?",
+      "expected_answer": "The earliest RAG methodology consisting of indexing, retrieval, and generation, with notable limitations.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2410.12837.pdf",
+        "2409.14924.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": "Defined in all RAG surveys"
+    },
+    {
+      "id": "q02",
+      "question": "What is Advanced RAG?",
+      "expected_answer": "An RAG paradigm that improves on Naive RAG via pre/post-retrieval optimization.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2410.12837.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q03",
+      "question": "What is Modular RAG?",
+      "expected_answer": "A flexible RAG framework that decomposes the pipeline into reconfigurable modules.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": "Primarily defined in Gao et al"
+    },
+    {
+      "id": "q04",
+      "question": "What is dense passage retrieval?",
+      "expected_answer": "A retrieval approach using dense vector embeddings to find semantically similar passages.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2402.19473.pdf",
+        "2409.14924.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q05",
+      "question": "What is HyDE in the context of RAG?",
+      "expected_answer": "Hypothetical Document Embeddings: generate a hypothetical answer first, embed it, then retrieve.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Exact acronym; BM25 should excel"
+    },
+    {
+      "id": "q06",
+      "question": "What does the RAGAS evaluation framework measure?",
+      "expected_answer": "An LLM-based RAG evaluation framework that adjudicates quality scores across multiple dimensions.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2402.19473.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Exact tool name"
+    },
+    {
+      "id": "q07",
+      "question": "What is the ARES tool used for?",
+      "expected_answer": "Automated RAG evaluation tool that uses LLMs for quality scoring.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Exact acronym"
+    },
+    {
+      "id": "q08",
+      "question": "What is the RGB benchmark for RAG?",
+      "expected_answer": "A benchmark that appraises essential abilities of RAG models.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Exact acronym"
+    },
+    {
+      "id": "q09",
+      "question": "What is the CRUD benchmark for RAG?",
+      "expected_answer": "A benchmark designed to evaluate RAG model abilities.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Exact acronym"
+    },
+    {
+      "id": "q10",
+      "question": "What is the RECALL benchmark for RAG?",
+      "expected_answer": "A benchmark for assessing RAG core capabilities.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Exact acronym"
+    },
+    {
+      "id": "q11",
+      "question": "What is the FLARE algorithm in RAG?",
+      "expected_answer": "Forward-Looking Active REtrieval augmented generation — actively decides when to retrieve during generation.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Exact algorithm name"
+    },
+    {
+      "id": "q12",
+      "question": "What is Self-RAG?",
+      "expected_answer": "A RAG framework where the model self-reflects and decides when to retrieve and how to use retrievals.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2409.14924.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Exact term"
+    },
+    {
+      "id": "q13",
+      "question": "What is TruLens used for?",
+      "expected_answer": "An automated LLM-based RAG evaluation tool.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Exact product name"
+    },
+    {
+      "id": "q14",
+      "question": "What is the difference between Naive RAG and Advanced RAG?",
+      "expected_answer": "Naive RAG: simple index-retrieve-generate. Advanced RAG: adds pre-retrieval optimization (query rewriting) and post-retrieval optimization (reranking, fusion).",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2410.12837.pdf"
+      ],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q15",
+      "question": "How does Modular RAG differ from Advanced RAG?",
+      "expected_answer": "Modular RAG decomposes the RAG pipeline into reconfigurable modules; Advanced RAG enhances the standard pipeline.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q16",
+      "question": "How does retrieval-augmented generation compare to fine-tuning?",
+      "expected_answer": "RAG uses external knowledge at inference time; fine-tuning bakes knowledge into the model weights.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2410.12837.pdf",
+        "2409.14924.pdf"
+      ],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q17",
+      "question": "What pre-retrieval optimization techniques does Advanced RAG use?",
+      "expected_answer": "Query rewriting, query expansion, query transformation, and routing strategies.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q18",
+      "question": "What post-retrieval optimization techniques does Advanced RAG use?",
+      "expected_answer": "Re-ranking, prompt compression, and information fusion of retrieved chunks.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q19",
+      "question": "What evaluation benchmarks for RAG do the surveys cover?",
+      "expected_answer": "RGB, RECALL, CRUD for core abilities; RAGAS, ARES, TruLens for automated quality scoring.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2402.19473.pdf"
+      ],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q20",
+      "question": "What chunking strategies are recommended for RAG systems?",
+      "expected_answer": "Fixed-size, recursive, sliding window, semantic, and adaptive query-aware chunking.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2409.14924.pdf",
+        "2410.12837.pdf"
+      ],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q21",
+      "question": "What are the limitations of Naive RAG?",
+      "expected_answer": "Echoing retrieved content without synthesis; poor handling of multi-hop questions; retrieval-generation misalignment.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2410.12837.pdf"
+      ],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q22",
+      "question": "How does RAG handle multimodal content like images and audio?",
+      "expected_answer": "RAG can be extended to multimodal generation via modality-specific retrievers and encoders.",
+      "expected_sources": [
+        "2402.19473.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": "Specifically the AIGC paper's focus"
+    },
+    {
+      "id": "q23",
+      "question": "What is iterative retrieval in RAG?",
+      "expected_answer": "A retrieval strategy that performs multiple retrieval rounds, refining queries between iterations.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2409.14924.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "medium",
+      "notes": ""
+    },
+    {
+      "id": "q24",
+      "question": "What is query rewriting in RAG?",
+      "expected_answer": "Reformulating the user's original query to improve retrieval (e.g. expansion, decomposition).",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf"
+      ],
+      "category": "simple_lookup",
+      "difficulty": "easy",
+      "notes": ""
+    },
+    {
+      "id": "q25",
+      "question": "What methods can improve retrieval quality in RAG systems?",
+      "expected_answer": "Better embedders, hybrid retrieval, reranking, query rewriting, and adaptive chunking.",
+      "expected_sources": [
+        "rag-survey-gao-2024.pdf",
+        "2410.12837.pdf",
+        "2409.14924.pdf"
+      ],
+      "category": "multi_hop",
+      "difficulty": "medium",
+      "notes": ""
+    }
+  ]
+}

@@ -22,6 +22,9 @@ data/processed/
 # Sample corpus IS committed (reviewers can run seed.py immediately)
 !data/raw/
 
+# Third-party test PDFs — fetched on demand by scripts/download_rag_papers.py
+data/test-pdfs/
+
 # Test artifacts
 .coverage
 htmlcov/
