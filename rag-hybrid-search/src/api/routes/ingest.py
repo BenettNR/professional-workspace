@@ -49,20 +49,22 @@ async def ingest_document(
             detail=f"Invalid strategy '{strategy}'. Choose: fixed, recursive, semantic",
         ) from exc
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-        tmp_path = Path(tmp.name)
+    # Write the upload to a temp directory using the ORIGINAL basename, so the
+    # indexer (which reads `file_path.name` for the chunk metadata) records the
+    # real filename — not a random tmpXXX. Path(...).name strips any directory
+    # components from the user-supplied filename, so this is also path-traversal-safe.
+    safe_name = Path(filename).name
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_path = Path(tmpdir) / safe_name
+        try:
+            async with aiofiles.open(tmp_path, "wb") as out:
+                content = await file.read()
+                await out.write(content)
 
-    try:
-        async with aiofiles.open(tmp_path, "wb") as out:
-            content = await file.read()
-            await out.write(content)
-
-        result = await indexer.ingest_file(tmp_path, strategy=chunk_strategy)
-        sparse_retriever.invalidate_cache()
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
-    finally:
-        tmp_path.unlink(missing_ok=True)
+            result = await indexer.ingest_file(tmp_path, strategy=chunk_strategy)
+            sparse_retriever.invalidate_cache()
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     return IngestResponse(
         filename=filename,
